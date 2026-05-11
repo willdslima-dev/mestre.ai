@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mestre.IA ⚡</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0f18;--bg2:#151824;--bg3:#1c2033;--bg4:#222640;
+  --accent:#6c63ff;--accent2:#8b85ff;--accent3:rgba(108,99,255,.15);
+  --text:#e8eaf0;--muted:#7b7e99;--border:#252840;
+  --green:#3ecf8e;--yellow:#f5a623;--red:#f06070;
+  --green-bg:rgba(62,207,142,.12);--yellow-bg:rgba(245,166,35,.12);--red-bg:rgba(240,96,112,.12);
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;flex-direction:column;max-width:520px;margin:0 auto;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;z-index:10}
+.hdr-logo{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),#a855f7);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 12px rgba(108,99,255,.4)}
+.hdr-info h1{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.hdr-info p{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:2px}
+.dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.hdr-menu{margin-left:auto;display:flex;gap:4px}
+.btn-hdr{background:none;border:none;color:var(--muted);cursor:pointer;padding:8px;border-radius:10px;font-size:18px;transition:.15s;line-height:1}
+.btn-hdr:hover{background:var(--bg3);color:var(--text)}
+.chat{flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.chat::-webkit-scrollbar{width:3px}
+.chat::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.msg{display:flex;gap:8px;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border)}
+.msg.user .avatar{background:var(--accent);border-color:var(--accent)}
+.msg-body{max-width:88%;display:flex;flex-direction:column;gap:3px}
+.msg.user .msg-body{align-items:flex-end}
+.bubble{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.6;word-break:break-word}
+.msg.user .bubble{background:var(--accent);border-bottom-right-radius:4px}
+.msg.bot .bubble{background:var(--bg3);border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg-time{font-size:11px;color:var(--muted);padding:0 4px}
+.typing-dots{display:flex;gap:4px;align-items:center;padding:2px 0}
+.typing-dots span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:blink 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{transform:scale(.7);opacity:.5}40%{transform:scale(1);opacity:1}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;width:100%;max-width:320px}
+.card-hdr{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:600;font-size:13px;border-bottom:1px solid var(--border)}
+.card-hdr.purple{background:linear-gradient(135deg,var(--accent),#a855f7)}
+.card-hdr.green{background:linear-gradient(135deg,#059669,#10b981)}
+.card-hdr.dark{background:var(--bg3)}
+.card-body{padding:10px 14px}
+.row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;gap:8px}
+.row:last-child{border:none}
+.row .lbl{color:var(--muted);flex-shrink:0}
+.row .val{font-weight:500;text-align:right}
+.card-total{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700;background:var(--accent3);border-top:1px solid var(--border)}
+.card-footer{padding:8px 10px;display:flex;gap:6px;border-top:1px solid var(--border)}
+.btn-sm{flex:1;padding:8px 6px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--text);font-size:12px;cursor:pointer;transition:.15s;font-weight:500}
+.btn-sm:hover{background:var(--border)}
+.btn-sm.primary{background:var(--accent);border-color:var(--accent);font-weight:600}
+.badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.badge-blue{background:var(--accent3);color:var(--accent2)}
+.item-linha{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px dashed var(--border)}
+.item-linha:last-child{border:none}
+.item-nome{color:var(--muted);flex:1;padding-right:8px}
+.item-val{color:var(--text);font-weight:500;white-space:nowrap}
+.divider{height:1px;background:var(--border);margin:6px 0}
+.sec-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:6px 0 4px}
+.alert-box{background:var(--yellow-bg);border:1px solid rgba(245,166,35,.3);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--yellow);margin:6px 0}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 12px;flex-shrink:0;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:8px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;font-size:13px;cursor:pointer;color:var(--text);transition:.15s;flex-shrink:0}
+.chip:hover,.chip:active{background:var(--accent);border-color:var(--accent)}
+.input-bar{background:var(--bg2);border-top:1px solid var(--border);padding:10px 12px;display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+.input-wrap{flex:1;background:var(--bg3);border:1.5px solid var(--border);border-radius:20px;padding:9px 14px;display:flex;align-items:flex-end;gap:8px;transition:.2s}
+.input-wrap:focus-within{border-color:var(--accent)}
+textarea{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;resize:none;max-height:120px;min-height:20px;font-family:inherit;line-height:1.45}
+textarea::placeholder{color:var(--muted)}
+.btn-send{width:44px;height:44px;background:var(--accent);border:none;border-radius:50%;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0;box-shadow:0 4px 12px rgba(108,99,255,.4)}
+.btn-send:hover{background:var(--accent2);transform:scale(1.05)}
+.btn-send:active{transform:scale(.95)}
+.btn-mic{width:44px;height:44px;background:var(--bg3);border:1.5px solid var(--border);border-radius:50%;color:var(--muted);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
+.btn-mic:hover{border-color:var(--accent);color:var(--accent2)}
+.btn-mic.rec{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 0 0 4px rgba(240,96,112,.25);animation:micpulse 1s infinite}
+@keyframes micpulse{0%,100%{box-shadow:0 0 0 4px rgba(240,96,112,.25)}50%{box-shadow:0 0 0 8px rgba(240,96,112,.08)}}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:520px;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal h2{font-size:16px;margin-bottom:16px}
+.modal-row{display:flex;gap:10px;margin-bottom:16px}
+.modal-btn{flex:1;padding:14px 8px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:13px;cursor:pointer;text-align:center;transition:.15s;line-height:1.4}
+.modal-btn:hover{background:var(--accent);border-color:var(--accent)}
+.modal-close{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:none;color:var(--muted);font-size:14px;cursor:pointer}
+.c-green{color:var(--green)}.c-yellow{color:var(--yellow)}.c-red{color:var(--red)}.c-muted{color:var(--muted);font-size:12px}
+.clicavel{cursor:pointer;transition:.15s}.clicavel:hover{opacity:.8}
+/* IA */
+.ia-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;letter-spacing:.3px;margin-left:4px}
+.ia-on{background:rgba(108,99,255,.2);color:var(--accent2);border:1px solid rgba(108,99,255,.3)}
+.ia-off{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
+.ia-modal-body{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
+.ia-input{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:13px;width:100%;font-family:monospace;letter-spacing:.5px}
+.ia-input:focus{outline:none;border-color:var(--accent)}
+.ia-hint{font-size:11px;color:var(--muted);line-height:1.5}
+.ia-hint a{color:var(--accent2);text-decoration:none}
+.ia-status-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);font-size:13px}
+.btn-ia-salvar{width:100%;padding:13px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-ia-salvar:hover{background:var(--accent2)}
+.btn-ia-remover{background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;padding:4px 0;margin-top:-6px;text-align:left}
+.thinking{display:flex;gap:3px;align-items:center;padding:4px 0}
+.thinking span{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:think 1.2s infinite}
+.thinking span:nth-child(2){animation-delay:.2s}
+.thinking span:nth-child(3){animation-delay:.4s}
+@keyframes think{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-logo">⚡</div>
+  <div class="hdr-info">
+    <h1>Mestre.IA</h1>
+    <p><span class="dot"></span><span id="hdr-status">Assistente de orçamentos</span></p>
+  </div>
+  <div class="hdr-menu">
+    <button class="btn-hdr" id="btn-ia" onclick="abrirConfigIA()" title="Configurar IA">✨</button>
+    <button class="btn-hdr" onclick="abrirMenu()">⋮</button>
+  </div>
+</div>
+<div class="chat" id="chat"></div>
+<div class="chips" id="chips">
+  <button class="chip" onclick="enviarChip('Novo orçamento')">📋 Orçamento</button>
+  <button class="chip" onclick="enviarChip('Listar clientes')">👥 Clientes</button>
+  <button class="chip" onclick="enviarChip('Ver pendências')">⏳ Pendências</button>
+  <button class="chip" onclick="enviarChip('Registrar pagamento')">💰 Pagamento</button>
+  <button class="chip" onclick="enviarChip('ajuda')">❓ Ajuda</button>
+</div>
+<div class="input-bar">
+  <div class="input-wrap">
+    <textarea id="inp" placeholder="Ex: cliente João da Rua 5 precisa de quadro com 7 disjuntores..." rows="1"></textarea>
+  </div>
+  <button class="btn-mic" id="btn-mic" onclick="toggleAudio()" title="Falar">🎤</button>
+  <button class="btn-send" onclick="enviar()">➤</button>
+</div>
+<div class="overlay" id="overlay" onclick="fecharMenu()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>Menu</h2>
+    <div class="modal-row">
+      <button class="modal-btn" onclick="fecharMenu();enviarChip('Listar clientes')">👥<br>Clientes</button>
+      <button class="modal-btn" onclick="fecharMenu();enviarChip('Ver pendências')">⏳<br>Pendências</button>
+      <button class="modal-btn" onclick="fecharMenu();enviarChip('Relatório geral')">📊<br>Relatório</button>
+      <button class="modal-btn" onclick="exportarDados()">💾<br>Exportar</button>
+    </div>
+    <button class="modal-close" onclick="fecharMenu()">Fechar</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-ia" onclick="fecharConfigIA()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>✨ Inteligência Artificial</h2>
+    <div class="ia-modal-body">
+      <div class="ia-status-row" id="ia-status-row">
+        <span id="ia-status-icon">⭕</span>
+        <span id="ia-status-txt">IA não configurada — modo manual ativo</span>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);margin-bottom:6px;display:block">Chave da API Gemini (Google)</label>
+        <input class="ia-input" type="password" id="ia-key-input" placeholder="AIza..." autocomplete="off">
+        <button class="btn-ia-remover" id="btn-ia-remover" onclick="removerChaveIA()" style="display:none">🗑 Remover chave</button>
+      </div>
+      <p class="ia-hint">
+        Obtenha sua chave gratuita em <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>.<br>
+        A chave fica salva só no seu dispositivo. Com ela ativada, o app entende linguagem completamente natural — "joão 5 disjuntores", "maria pagou metade" etc.
+      </p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-ia-salvar" style="flex:1" onclick="salvarChaveIA()">Salvar e ativar</button>
+      <button class="btn-ia-salvar" style="flex:0 0 auto;background:var(--bg3);color:var(--text);border:1px solid var(--border)" onclick="testarChaveIA()">Testar 🔌</button>
+    </div>
+    <div id="ia-test-result" style="display:none;margin-top:8px;font-size:12px;padding:8px 12px;border-radius:8px"></div>
+    <button class="modal-close" style="margin-top:8px" onclick="fecharConfigIA()">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DB
+// ═══════════════════════════════════════
+// DB — funciona com localStorage ou em memória (data: URLs, preview)
+// ═══════════════════════════════════════
+const DB=(()=>{
+  // Testa se localStorage está disponível
+  let _ls=false;
+  try{localStorage.setItem('_oc_test','1');localStorage.removeItem('_oc_test');_ls=true;}catch(e){}
+  // Fallback em memória (dados ficam enquanto a aba estiver aberta)
+  const _mem={};
+  function _set(k,v){if(_ls){try{localStorage.setItem(k,v)}catch(e){_mem[k]=v}}else{_mem[k]=v}}
+  function _get(k){if(_ls){try{return localStorage.getItem(k)}catch(e){}}return _mem[k]??null}
+  return{
+    persistent:_ls,
+    _g(k){try{return JSON.parse(_get(k)||'null')}catch{return null}},
+    cli(){return this._g('oc_cli')||{}},
+    orc(){return this._g('oc_orc')||{}},
+    pag(){return this._g('oc_pag')||[]},
+    save(c,o,p){_set('oc_cli',JSON.stringify(c));_set('oc_orc',JSON.stringify(o));_set('oc_pag',JSON.stringify(p))}
+  };
+})();
+let CLI=DB.cli(),ORC=DB.orc(),PAG=DB.pag();
+// Tabela de preços personalizados do usuário (sobrescreve o catálogo padrão)
+let PRECOS_USER=(()=>{try{return JSON.parse(localStorage.getItem('oc_precos')||'{}')}catch{return{}}})();
+const savePrecos=()=>{try{localStorage.setItem('oc_precos',JSON.stringify(PRECOS_USER))}catch(e){}};
+const save=()=>DB.save(CLI,ORC,PAG);
+
+// ═══════════════════════════════════════
+// CONTEXTO
+// ═══════════════════════════════════════
+let CTX={
+  cliente:null,    // id do cliente
+  orcamento:null,  // id do orçamento
+  aguardando:null, // ação pendente
+  dados:{}         // dados temp
+};
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const hoje=()=>new Date().toISOString().split('T')[0];
+const fmt=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
+const fmtD=d=>{if(!d)return'—';const[a,m,dd]=d.split('-');return`${dd}/${m}/${a}`};
+const hora=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const proprio=s=>s.trim().split(' ').filter(w=>w.length>0).map(w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+const chave=s=>s.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+
+// Converte palavras numéricas para dígitos
+const NUM_MAP={
+  'zero':0,'um':1,'uma':1,'dois':2,'duas':2,'três':3,'tres':3,
+  'quatro':4,'cinco':5,'seis':6,'sete':7,'oito':8,'nove':9,'dez':10,
+  'onze':11,'doze':12,'treze':13,'quatorze':14,'catorze':14,'quinze':15,
+  'dezesseis':16,'dezessete':17,'dezoito':18,'dezenove':19,'vinte':20,
+  'trinta':30,'quarenta':40,'cinquenta':50,'sessenta':60,'setenta':70,'oitenta':80,'noventa':90
+};
+
+function normNums(txt){
+  let r=txt;
+  for(const[p,n]of Object.entries(NUM_MAP)){
+    r=r.replace(new RegExp(`\\b${p}\\b`,'gi'),String(n));
+  }
+  return r;
+}
+
+function parsearValor(txt){
+  const t=txt.toLowerCase();
+  if(/metade/.test(t)){
+    if(CTX.orcamento)return ORC[CTX.orcamento]?.total/2||0;
+    return 0;
+  }
+  const mils=t.match(/(\d+(?:[.,]\d+)?)\s*mil/);
+  if(mils)return parseFloat(mils[1].replace(',','.'))*1000;
+  const rs=txt.match(/R\$\s*([\d.,]+)/);
+  if(rs)return parseFloat(rs[1].replace(/\.(?=\d{3})/g,'').replace(',','.'));
+  const reais=t.match(/([\d.,]+)\s*reais/);
+  if(reais)return parseFloat(reais[1].replace(',','.'));
+  const n=txt.match(/\b(\d+(?:[.,]\d+)?)\b/);
+  if(n)return parseFloat(n[1].replace(',','.'));
+  return 0;
+}
+
+function parsearData(txt){
+  const t=txt.toLowerCase();
+  if(/hoje/.test(t))return hoje();
+  if(/ontem/.test(t)){const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().split('T')[0]}
+  const m1=t.match(/dia\s+(\d{1,2})(?:\/(\d{1,2}))?/);
+  if(m1){const d=new Date(new Date().getFullYear(),m1[2]?parseInt(m1[2])-1:new Date().getMonth(),parseInt(m1[1]));return d.toISOString().split('T')[0]}
+  const m2=t.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?/);
+  if(m2){const d=new Date(m2[3]||new Date().getFullYear(),parseInt(m2[2])-1,parseInt(m2[1]));return d.toISOString().split('T')[0]}
+  return hoje();
+}
+
+// ═══════════════════════════════════════
+// CATÁLOGO DE SERVIÇOS
+// ═══════════════════════════════════════
+// precisaMedida: true = precisa pedir metragem/área ao usuário
+// un: unidade (un, m, m²)
+// vinculo: quando aparece com outro item, usa a mesma medida
+const CAT={
+  // Quadros e proteção
+  'quadro':                                  {n:'Quadro de distribuição',p:180,un:'un'},
+  'disjuntor':                               {n:'Disjuntor',p:38,un:'un'},
+  'disjuntor bipolar':                       {n:'Disjuntor bipolar',p:75,un:'un'},
+  'disjuntor trifasico':                     {n:'Disjuntor trifásico',p:120,un:'un'},
+  'dps':                                     {n:'DPS (protetor surto)',p:85,un:'un'},
+  // Pontos elétricos
+  'tomada':                                  {n:'Tomada',p:28,un:'un'},
+  'tomada 2p':                               {n:'Tomada 2P+T',p:35,un:'un'},
+  'tomada piso':                             {n:'Tomada de piso',p:65,un:'un'},
+  'tomada dupla':                            {n:'Tomada dupla',p:45,un:'un'},
+  'interruptor':                             {n:'Interruptor simples',p:22,un:'un'},
+  'interruptor duplo':                       {n:'Interruptor duplo',p:35,un:'un'},
+  'interruptor triplo':                      {n:'Interruptor triplo',p:48,un:'un'},
+  'ponto':                                   {n:'Ponto elétrico',p:120,un:'un'},
+  // Cabos e eletrodutos
+  'fio 1.5':                                 {n:'Fio 1,5mm²',p:2.8,un:'m'},
+  'fio 2.5':                                 {n:'Fio 2,5mm²',p:3.9,un:'m'},
+  'fio 4':                                   {n:'Fio 4mm²',p:5.5,un:'m'},
+  'fio 6':                                   {n:'Fio 6mm²',p:8.2,un:'m'},
+  'fio 10':                                  {n:'Fio 10mm²',p:13,un:'m'},
+  'cabo pp':                                 {n:'Cabo PP',p:5.5,un:'m'},
+  'eletroduto':                              {n:'Eletroduto 3/4"',p:3.2,un:'m'},
+  'caixa 4x4':                               {n:'Caixa 4x4',p:4,un:'un'},
+  'caixa 4x2':                               {n:'Caixa 4x2',p:3,un:'un'},
+  // Iluminação
+  'spot':                                    {n:'Spot de embutir',p:50,un:'un'},
+  'lampada':                                 {n:'Lâmpada LED',p:18,un:'un'},
+  'lampada led':                             {n:'Lâmpada LED',p:18,un:'un'},
+  'luminaria':                               {n:'Luminária',p:85,un:'un'},
+  'lustre':                                  {n:'Ponto p/ lustre',p:90,un:'un'},
+  'arandela':                                {n:'Arandela',p:65,un:'un'},
+  'pendente':                                {n:'Pendente',p:90,un:'un'},
+  'fita led':                                {n:'Fita LED',p:30,un:'m',precisaMedida:true},
+  'barra de led':                            {n:'Fita LED',p:30,un:'m',precisaMedida:true},
+  'perfil led':                              {n:'Perfil LED',p:45,un:'m',precisaMedida:true},
+  'led':                                     {n:'Ponto LED',p:45,un:'un'},
+  // Climatização
+  'split':                                   {n:'Instalação Split',p:350,un:'un'},
+  'ar condicionado':                         {n:'Instalação Split',p:350,un:'un'},
+  'ventilador':                              {n:'Ponto p/ ventilador',p:180,un:'un'},
+  'exaustor':                                {n:'Ponto p/ exaustor',p:150,un:'un'},
+  // Gesso / Civil
+  'sanca':                                   {n:'Sanca de gesso',p:38,un:'m',precisaMedida:true},
+  'sanca de gesso':                          {n:'Sanca de gesso',p:38,un:'m',precisaMedida:true},
+  'forro':                                   {n:'Forro de gesso',p:45,un:'m²',precisaMedida:true},
+  'forro de gesso':                          {n:'Forro de gesso',p:45,un:'m²',precisaMedida:true},
+  'gesso':                                   {n:'Gesso/Reboco',p:35,un:'m²',precisaMedida:true},
+  'ripa':                                    {n:'Ripa de madeira',p:8,un:'un'},
+  'ripas':                                   {n:'Ripa de madeira',p:8,un:'un'},
+  'massa corrida':                           {n:'Massa corrida',p:14,un:'m²',precisaMedida:true},
+  'tinta':                                   {n:'Pintura (1 demão)',p:12,un:'m²',precisaMedida:true},
+  'porcelanato':                             {n:'Porcelanato',p:85,un:'m²',precisaMedida:true},
+  'piso':                                    {n:'Piso/Porcelanato',p:80,un:'m²',precisaMedida:true},
+  // Segurança
+  'camera':                                  {n:'Câmera CFTV',p:180,un:'un'},
+  'cftv':                                    {n:'Kit CFTV',p:850,un:'un'},
+  'alarme':                                  {n:'Sistema de Alarme',p:350,un:'un'},
+  'interfone':                               {n:'Interfone',p:220,un:'un'},
+};
+
+// Normaliza chave do catálogo para busca
+const CAT_KEYS=Object.keys(CAT).sort((a,b)=>b.length-a.length); // maior primeiro = match mais específico
+
+function buscarCat(texto){
+  const t=texto.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  for(const k of CAT_KEYS){
+    const kn=k.normalize('NFD').replace(/[̀-ͯ]/g,'');
+    if(t.includes(kn)){
+      const entrada={...CAT[k],chave:k};
+      // Preço do usuário sobrescreve o catálogo
+      if(PRECOS_USER[k]!==undefined)entrada.p=PRECOS_USER[k];
+      return entrada;
+    }
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════
+// EXTRAÇÃO DE ENTIDADES
+// ═══════════════════════════════════════
+const STOP_NAMES=['quanto','pendente','faturamento','orcamento','orçamento','pagamento','novo','listar','ajuda','hoje','ontem','dia','valor','registrar','ver','mostrar','gerar','nota','nf','saldo','historico','relatorio','todos','cliente','precisa','preciso','quero','adicionar','incluir','remover','tirar'];
+
+function extrairNome(txt){
+  const pads=[
+    // "cliente João Lima da Rua 5..."
+    /cliente\s+([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+){0,3}?)(?:\s+(?:da|do|de|na|no|em|com|tel|fone|\d)|\s*,|\s*precisa|$)/i,
+    // "João precisa de..." / "João Lima quer..."
+    /^([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+){0,2})\s+(?:precisa|quer|vai|tem\s+que|gostaria|solicita)/i,
+    // "João pagou" / "o João pagou"
+    /^([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+)?)\s+pagou/i,
+    /(?:o|a)\s+([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+)?)\s+pagou/i,
+    // "saldo do João" / "orçamento da Maria"
+    /(?:saldo|pendente|faturamento|or[çc]amento|nota|extrato)\s+(?:do?|da?)\s+([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+)?)/i,
+    // "do João" / "para a Maria"
+    /(?:do?|da?|pro|pra|para)\s+(?:o\s+|a\s+)?(?:cliente\s+)?([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+)?)/i,
+  ];
+  for(const p of pads){
+    const m=txt.match(p);
+    if(m){
+      const nome=m[1].trim();
+      if(!STOP_NAMES.includes(nome.toLowerCase())&&nome.length>1)return nome;
+    }
+  }
+  return null;
+}
+
+function extrairEndereco(txt){
+  const t=txt.toLowerCase();
+  const partes=[];
+  const pads=[
+    /(?:da|na|no|em|rua|av\.?|avenida|travessa|alameda|estrada)\s+(?:rua\s+|av\.\s+|avenida\s+)?([^,;]+?)(?=\s*,|\s*(?:tel|fone|cel|precisa|bairro|bloco|apto|nr|número|n\s*\d)|$)/i,
+    /bairro\s+([^,;]+?)(?=\s*,|$)/i,
+    /apto?\.?\s*(\d+[^,]*)/i,
+    /bloco?\s*([^,;]+?)(?=\s*,|$)/i,
+    /condom[ií]nio\s+([^,;]+?)(?=\s*,|$)/i,
+  ];
+  for(const p of pads){
+    const m=txt.match(p);
+    if(m){const s=m[0].trim();if(s.length>3&&s.length<60)partes.push(proprio(s))}
+  }
+  return partes.join(', ');
+}
+
+function extrairTelefone(txt){
+  const m=txt.match(/(?:tel|fone|cel|whats|zap)?\s*:?\s*(\(?\d{2}\)?\s*\d{4,5}[-\s]?\d{4})/i);
+  return m?m[1].replace(/\s/g,''):null;
+}
+
+// ═══════════════════════════════════════
+// PARSER DE SERVIÇOS INTELIGENTE
+// ═══════════════════════════════════════
+
+/*
+  Entende frases como:
+  "1 quadro com 7 disjuntores, uma sanca com barra de led"
+  "3 splits de 9000 btus"
+  "50m de fio 2.5 e 10 tomadas"
+  "instalação de ponto para ventilador"
+*/
+
+function parsearServicos(txt){
+  // Normaliza números por extenso
+  let t=normNums(txt);
+
+  const encontrados=[];  // itens com qtd/medida resolvidos
+  const faltaMedida=[];  // itens que precisam de metragem/área
+
+  // Remove verbos de ação que confundem o parser
+  t=t.replace(/\b(instala[çc][aã]o\s+de|colocar?|instalar?|montar?|fazer?|precisar?\s+de|preciso\s+de)\b/gi,' ');
+
+  // Divide por vírgula e " e " (mas não dentro de "fita led", "ar condicionado", etc.)
+  const segmentos=dividirSegmentos(t);
+
+  for(const seg of segmentos){
+    const s=seg.trim();
+    if(!s||s.length<2)continue;
+
+    // Verifica "X com Y" (ex: "1 quadro com 7 disjuntores")
+    if(/\bcom\b/i.test(s)){
+      const partes=s.split(/\bcom\b/i);
+      const res1=parsearSegmento(partes[0].trim());
+      const res2=parsearSegmento(partes[1]?.trim()||'');
+
+      if(res1){
+        if(res1.precisaMedida)faltaMedida.push(res1);
+        else encontrados.push(res1);
+      }
+      if(res2){
+        // Herdar quantidade do item1 se item2 não tiver explícita
+        if(!res2.qtdExplicita&&res1&&!res1.precisaMedida){
+          res2.qtd=res1.qtd;
+          res2.total=res2.qtd*res2.p;
+        }
+        // Se item1 precisaMedida, item2 relacionado também precisa (e vai usar mesma medida)
+        if(res2.precisaMedida){
+          if(res1?.precisaMedida)res2.vinculado=res1.n; // mesma metragem
+          faltaMedida.push(res2);
+        } else {
+          encontrados.push(res2);
+        }
+      }
+    } else {
+      const res=parsearSegmento(s);
+      if(res){
+        if(res.precisaMedida)faltaMedida.push(res);
+        else encontrados.push(res);
+      }
+    }
+  }
+
+  return{encontrados,faltaMedida};
+}
+
+function dividirSegmentos(txt){
+  // Divide por vírgula ou " e " que precede número/artigo
+  return txt.split(/,|\s+e\s+(?=\d|um|uma|dois|duas|tr[eê]s|quatro|cinco|seis|sete|oito|nove|dez|uma?\s)/i);
+}
+
+function parsearSegmento(seg){
+  if(!seg||seg.length<2)return null;
+
+  // Tira artigos iniciais, preposições e verbos
+  const limpo=seg.replace(/^(?:de\s+|da\s+|do\s+|para\s+|pra\s+|p[/\s]|um\s+|uma\s+|os\s+|as\s+|o\s+|a\s+)+/i,'').trim();
+
+  // Extrai quantidade no início: "7 disjuntores", "50m de fio"
+  let qtd=1,qtdExplicita=false,nomeParte=limpo;
+
+  // "50m de X" ou "50 metros de X"
+  const mMetros=limpo.match(/^(\d+(?:[.,]\d+)?)\s*(?:m(?:etros?)?|m²|m2)\s+(?:de\s+)?(.+)/i);
+  if(mMetros){
+    qtd=parseFloat(mMetros[1].replace(',','.'));
+    nomeParte=mMetros[2].trim();
+    qtdExplicita=true;
+  } else {
+    // "5 tomadas" ou "5x tomadas"
+    const mQtd=limpo.match(/^(\d+(?:[.,]\d+)?)\s*(?:x\s+|un\s+)?(.+)/i);
+    if(mQtd&&!isNaN(parseFloat(mQtd[1]))){
+      qtd=parseFloat(mQtd[1].replace(',','.'));
+      nomeParte=mQtd[2].trim();
+      qtdExplicita=true;
+    }
+  }
+
+  // Remove "de X" extras do início do nome
+  nomeParte=nomeParte.replace(/^(?:de\s+|para\s+|p\/\s*)/i,'').trim();
+
+  // Busca no catálogo
+  const entrada=buscarCat(nomeParte);
+
+  // Item não encontrado no catálogo mas tem quantidade → cria genérico sem preço
+  if(!entrada){
+    if(qtdExplicita&&nomeParte.length>1){
+      const nomeGen=nomeParte.split(' ').filter(w=>w.length>0).map(w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+      return{n:nomeGen,p:0,un:'un',qtd,total:0,precisaMedida:false,qtdExplicita,semPreco:true};
+    }
+    return null;
+  }
+
+  // Se precisa medida e não foi fornecida, retorna sem total
+  if(entrada.precisaMedida&&!qtdExplicita){
+    return{n:entrada.n,p:entrada.p,un:entrada.un,qtd:0,total:0,precisaMedida:true,vinculado:null};
+  }
+
+  return{n:entrada.n,p:entrada.p,un:entrada.un,qtd,total:qtd*entrada.p,precisaMedida:false,qtdExplicita};
+}
+
+// ═══════════════════════════════════════
+// OPERAÇÕES DE DADOS
+// ═══════════════════════════════════════
+const findCli=nome=>{const k=chave(nome);return CLI[k]||null};
+function getOrCreateCli(nome,extra){
+  const k=chave(nome);
+  if(!CLI[k])CLI[k]={id:k,nome:proprio(nome),criadoEm:hoje()};
+  if(extra){Object.assign(CLI[k],extra)}
+  save();return CLI[k];
+}
+const orcsDosCli=cliId=>Object.values(ORC).filter(o=>o.clienteId===cliId).sort((a,b)=>b.criadoEm.localeCompare(a.criadoEm));
+const pagsDosCli=cliId=>PAG.filter(p=>p.clienteId===cliId).sort((a,b)=>a.data.localeCompare(b.data));
+function saldoCli(cliId){
+  const fat=orcsDosCli(cliId).reduce((s,o)=>s+(o.total||0),0);
+  const pago=pagsDosCli(cliId).reduce((s,p)=>s+p.valor,0);
+  return{fat,pago,pend:fat-pago};
+}
+function criarOrc(cliId,desc,itens,mdo){
+  const id=uid();
+  const sub=itens.reduce((s,i)=>s+(i.total||0),0);
+  const num=orcsDosCli(cliId).length+1;
+  ORC[id]={id,clienteId:cliId,descricao:desc,num,itens,mdo,total:sub+mdo,status:'pendente',criadoEm:hoje(),prazo:null};
+  save();return ORC[id];
+}
+function addItemOrc(orcId,item){
+  const o=ORC[orcId];if(!o)return null;
+  if(item.tipo==='mdo'){o.mdo=(o.mdo||0)+item.valor;}
+  else o.itens.push({nome:item.n||item.nome,qtd:item.qtd,precoUnit:item.p||item.precoUnit,total:item.total,un:item.un||'un'});
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+(o.mdo||0);
+  save();return o;
+}
+function removerItemOrc(orcId,nomeItem){
+  const o=ORC[orcId];if(!o)return null;
+  const prev=o.itens.length;
+  o.itens=o.itens.filter(i=>!i.nome.toLowerCase().includes(nomeItem.toLowerCase()));
+  if(o.itens.length===prev)return null;
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+(o.mdo||0);
+  save();return o;
+}
+function ultimoOrc(cliId){return orcsDosCli(cliId)[0]||null}
+function regPag(cliId,orcId,valor,data,obs){
+  const p={id:uid(),clienteId:cliId,orcamentoId:orcId||null,valor,data:data||hoje(),obs:obs||''};
+  PAG.push(p);save();return p;
+}
+
+// ═══════════════════════════════════════
+// INTENCÃO
+// ═══════════════════════════════════════
+function intencao(txt){
+  const t=txt.toLowerCase();
+  if(/precisa\s+d[aeo]|fazer\s+or[çc]|novo\s+or[çc]|or[çc]amento\s+(para|pro|pra)|quero\s+or[çc]|criar\s+or[çc]/.test(t))return'CRIAR';
+  if(/pagou|recebi\s+(de|do)|registrar\s+pag|pagamento\s+(de|do)/.test(t))return'PAG';
+  if(/quanto\s+\w+\s+deve|pendente\s+(do?|da?)|saldo\s+(do?|da?)|d[ií]vida|quanto\s+falta|quanto\s+deve/.test(t))return'SALDO';
+  if(/faturamento|hist[oó]rico|extrato|resumo\s+(do?|da?)/.test(t))return'FATUR';
+  if(/gerar\s+(nf|nota|fatura|recibo)|nota\s+fiscal|emitir\s+(nf|nota)|imprimir\s+(nf|fatura)/.test(t))return'FATURA';
+  if(/(?:mostrar?|ver|exibir|qual)\s+(?:o\s+)?or[çc]|or[çc]amento\s+(do?|da?)/.test(t))return'VER_ORC';
+  if(/(adicionar?|incluir|acrescentar|colocar\s+mais?|mais\s+\d|botar\s+mais?)/.test(t))return'ADD';
+  if(/(remover?|tirar|retirar|excluir|deletar)\s+(o\s+|a\s+)?/.test(t))return'REMOVER';
+  if(/listar?\s+clientes?|todos?\s+(os\s+)?clientes?|meus\s+clientes?/.test(t))return'LIST_CLI';
+  if(/listar?\s+or[çc]|todos?\s+or[çc]/.test(t))return'LIST_ORC';
+  if(/pend[eê]ncias?|quem\s+(ainda\s+)?deve|em\s+aberto|a\s+receber/.test(t))return'PENDENCIAS';
+  if(/relat[oó]rio\s+geral|resumo\s+geral|vis[aã]o\s+geral|dashboard/.test(t))return'RELATORIO';
+  if(/prazo|vencimento/.test(t))return'PRAZO';
+  if(/ajuda|help|o\s+que\s+(voc[eê]\s+)?faz?|comandos?/.test(t))return'AJUDA';
+  if(/atualiz\w*\s+\w|definir?\s+pre[çc]o|mudar?\s+pre[çc]o|pre[çc]o\s+(d[aeo]\s+)?\w|pre[çc]o\s*[:=]|ver\s+pre[çc]os?|minha\s+tabela/.test(t))return'PRECO';
+  return'?';
+}
+
+// ═══════════════════════════════════════
+// PROCESSADOR PRINCIPAL
+// ═══════════════════════════════════════
+function processar(txt){
+  const int=intencao(txt);
+  let nome=extrairNome(txt);
+  if(!nome&&CTX.cliente)nome=CLI[CTX.cliente]?.nome;
+
+  // "sair" sem fluxo ativo — limpa contexto ativo
+  if(/^(sair|cancelar|para|pare|chega|esquece|limpar?|reset|voltar?)$/i.test(txt.trim())){
+    CTX.aguardando=null;CTX.dados={};CTX.orcamento=null;CTX.cliente=null;
+    return resp('Tudo limpo! Por onde quer começar? 😊',['Listar clientes','Ver pendências','Ajuda']);
+  }
+
+  // Resolver pendências antes de tudo
+  if(CTX.aguardando)return resolverPend(txt,nome,int);
+
+  switch(int){
+    case'CRIAR':return hCriar(txt,nome);
+    case'ADD':return hAdd(txt,nome);
+    case'REMOVER':return hRemover(txt,nome);
+    case'PAG':return hPag(txt,nome);
+    case'SALDO':return hSaldo(nome);
+    case'FATUR':return hFatur(nome);
+    case'FATURA':return hFatura(nome);
+    case'VER_ORC':return hVerOrc(nome,txt);
+    case'LIST_CLI':return hListCli();
+    case'LIST_ORC':return hListOrc(nome);
+    case'PENDENCIAS':return hPendencias();
+    case'RELATORIO':return hRelatorio();
+    case'PRAZO':return hPrazo(txt,nome);
+    case'AJUDA':return hAjuda();
+    case'PRECO':return hPreco(txt);
+    default:return hDesconhecido(txt,nome);
+  }
+}
+
+function resolverPend(txt,nome,int){
+  const ag=CTX.aguardando;
+
+  // "sair" / "cancelar" — break any flow immediately
+  if(/^(sair|cancelar|para|pare|chega|esquece|limpar?|reset|voltar?)$/i.test(txt.trim())){
+    CTX.aguardando=null;CTX.dados={};
+    return resp('Ok! O que quer fazer agora? 😊',['Ver orçamento','Listar clientes','Pendências']);
+  }
+
+  // Strong intent detected — break flow and re-process as new command
+  const BREAK=['PAG','SALDO','FATUR','FATURA','LIST_CLI','PENDENCIAS','RELATORIO','AJUDA','VER_ORC','CRIAR','PRECO','LIST_ORC','PRAZO','REMOVER'];
+  if(BREAK.includes(int)){CTX.aguardando=null;CTX.dados={};return processar(txt);}
+
+  CTX.aguardando=null;
+
+  // Aguardando nome do cliente
+  if(ag==='nome_orc')return hCriar(CTX.dados.txtOrig+' cliente '+txt, txt.trim());
+  if(ag==='nome_pag')return hPag(CTX.dados.txtOrig+' do '+txt, txt.trim());
+
+  // Aguardando valor de pagamento
+  if(ag==='valor_pag'){
+    const valor=parsearValor(txt);
+    if(valor>0){
+      const cli=CLI[CTX.dados.cliId];
+      const orc=ultimoOrc(cli.id);
+      const pag=regPag(cli.id,orc?.id,valor,parsearData(txt),'');
+      const s=saldoCli(cli.id);
+      CTX.dados={};
+      return resp(`💰 Perfeito! **${fmt(valor)}** registrado para **${cli.nome}** em ${fmtD(pag.data)}.\n\n${s.pend>0?`⏳ Ainda resta **${fmt(s.pend)}** para quitar.`:'✅ **Conta zerada! Tudo pago.**'}`);
+    }
+    CTX.aguardando='valor_pag';
+    return resp('Qual o valor pago? Ex: *500* ou *R$ 1.200*');
+  }
+
+  // Aguardando escolha: novo orçamento ou adicionar em existente
+  if(ag==='novo_ou_existente'){
+    const cliId=CTX.dados.cliId;
+    const txtOrig=CTX.dados.txtOrig||txt;
+    const nomeOrig=CTX.dados.nome;
+    const orcs=orcsDosCli(cliId);
+    CTX.dados={};
+    if(/^nov[oa]|^cri[ae]|^sim|^outro|^separad[oa]/i.test(txt.trim())){
+      return hCriar(txtOrig,nomeOrig,true);
+    }
+    const num=parseInt(txt.trim().replace(/[^\d]/g,''));
+    if(!isNaN(num)&&num>=1&&num<=orcs.length){
+      CTX.orcamento=orcs[num-1].id;CTX.cliente=cliId;
+      CTX.aguardando='itens';
+      return resp(`👍 Adicionando no **Orçamento ${num}** de **${CLI[cliId]?.nome}**.\n\nMe manda os itens! Diga **pronto** quando terminar.`);
+    }
+    CTX.aguardando='novo_ou_existente';
+    CTX.dados={cliId,txtOrig,nome:nomeOrig};
+    return resp(`Não entendi. Diga **novo** para criar um orçamento novo, ou o **número** do orçamento (${orcs.map((_,i)=>i+1).join(', ')}) para adicionar itens.`);
+  }
+
+  // Aguardando seleção de orçamento
+  if(ag==='selecionar_orc'){
+    const cliId=CTX.dados.cliId;
+    const orcs=orcsDosCli(cliId);
+    CTX.dados={};
+    const num=parseInt(txt.trim().replace(/[^\d]/g,''));
+    if(!isNaN(num)&&num>=1&&num<=orcs.length){
+      CTX.orcamento=orcs[num-1].id;CTX.cliente=cliId;
+      return respCard(`📋 Orçamento ${num} de ${CLI[cliId]?.nome}:`,cardOrc(orcs[num-1],CLI[cliId]));
+    }
+    CTX.aguardando='selecionar_orc';
+    CTX.dados={cliId};
+    return resp(`Qual o número? (1 a ${orcs.length})`);
+  }
+
+  // Aguardando metragem de itens
+  if(ag==='medidas'){
+    return resolverMedidas(txt);
+  }
+
+  // Aguardando itens do orçamento (fluxo aberto)
+  if(ag==='itens'){
+    if(/pronto|ok\b|finaliz|feito|isso|nada mais|só isso|por enquanto|salvar/i.test(txt)){
+      CTX.aguardando=null;
+      const o=ORC[CTX.orcamento];
+      const c=CLI[o?.clienteId];
+      if(o&&c)return respCard('✅ Orçamento finalizado!',cardOrc(o,c));
+      return resp('✅ Salvo!');
+    }
+    return hAdd(txt,nome);
+  }
+
+  return processar(txt);
+}
+
+function resolverMedidas(txt){
+  const fila=CTX.dados.fila||[];
+  if(!fila.length){CTX.dados={};return resp('Tudo certo!')}
+
+  // Extrai número da mensagem (metros ou m²)
+  const mN=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m(?:etros?|²|2)?)?/i);
+  const medida=mN?parseFloat(mN[1].replace(',','.')):0;
+  if(!medida){
+    CTX.aguardando='medidas';
+    return resp(`Não entendi a medida. Quanto ${fila[0].un==='m²'?'de área':'de comprimento'} tem a **${fila[0].n}**? Ex: *8* ou *8 metros*`);
+  }
+
+  // Aplica medida ao primeiro item da fila e a todos vinculados a ele
+  const principal=fila[0];
+  const vinculados=fila.filter((it,i)=>i>0&&it.vinculado===principal.n);
+  const restantes=fila.filter((it,i)=>i>0&&it.vinculado!==principal.n);
+
+  const itensParaAdd=[{...principal,qtd:medida,total:medida*principal.p},...vinculados.map(v=>({...v,qtd:medida,total:medida*v.p}))];
+
+  for(const it of itensParaAdd){
+    addItemOrc(CTX.orcamento,{...it,n:it.n,nome:it.n,precoUnit:it.p,tipo:'item'});
+  }
+
+  const o=ORC[CTX.orcamento];
+  const c=CLI[o.clienteId];
+
+  if(restantes.length===0){
+    CTX.dados={};
+    CTX.aguardando=null;
+    let m=`✅ Adicionado!\n• ${medida}${principal.un} de **${principal.n}** → ${fmt(medida*principal.p)}`;
+    for(const v of vinculados)m+=`\n• ${medida}${v.un} de **${v.n}** → ${fmt(medida*v.p)}`;
+    m+=`\n\n**Total do orçamento: ${fmt(o.total)}**`;
+    return respCard(m,cardOrc(o,c));
+  }
+
+  // Ainda tem itens pendentes
+  CTX.dados.fila=restantes;
+  CTX.aguardando='medidas';
+  const prox=restantes[0];
+  return resp(`✅ Adicionei **${medida}${principal.un}** de ${principal.n}${vinculados.length?` + ${vinculados.map(v=>v.n).join(' + ')}`:''} ao orçamento.\n\nAgora, qual a **${prox.un==='m²'?'área':'metragem'}** de **${prox.n}**?`);
+}
+
+// ═══════════════════════════════════════
+// HANDLERS
+// ═══════════════════════════════════════
+
+function hCriar(txt,nomeCliente,forceNew=false){
+  if(!nomeCliente){
+    CTX.aguardando='nome_orc';CTX.dados={txtOrig:txt};
+    return resp('Entendido! Só me falta o nome do cliente — quem é? 😊');
+  }
+
+  const endereco=extrairEndereco(txt);
+  const tel=extrairTelefone(txt);
+  const extra={};
+  if(endereco)extra.endereco=endereco;
+  if(tel)extra.tel=tel;
+  const cli=getOrCreateCli(nomeCliente,extra);
+  CTX.cliente=cli.id;
+
+  // Cliente já tem orçamentos? Perguntar se é novo ou adiciona no existente
+  if(!forceNew){
+    const orcExist=orcsDosCli(cli.id);
+    const isNovoExplicit=/\bnov[oa]\b|\boutr[oa]\b|\bdiferente\b|\bseparad[oa]\b|\bmais\s+um\b/i.test(txt);
+    if(orcExist.length>0&&!isNovoExplicit){
+      CTX.aguardando='novo_ou_existente';
+      CTX.dados={cliId:cli.id,txtOrig:txt,nome:nomeCliente};
+      const linhas=orcExist.map((o,i)=>`**${i+1}.** ${o.descricao} — ${fmt(o.total)} ${saldoCli(cli.id).pend<=0?'✅':'⏳'}`).join('\n');
+      return resp(`**${cli.nome}** já tem ${orcExist.length} orçamento(s):\n\n${linhas}\n\nQuer criar um **novo** orçamento ou adicionar itens em um existente?`,['Novo orçamento',...orcExist.map((_,i)=>`Orçamento ${i+1}`)]);
+    }
+  }
+
+  // Extrai descrição
+  let desc='Serviço';
+  const mDesc=txt.match(/precisa\s+d[aeo]\s+(.+?)(?:\s*,|\s*\be\s+\d|\s*com\s+\d|$)/i)||
+              txt.match(/(?:instalacao|instalação)\s+d[aeo]\s+(.+?)(?:\s*,|$)/i);
+  if(mDesc){desc=proprio(mDesc[1].replace(/\s+/g,' ').trim().slice(0,60))}
+
+  // Remove o nome do cliente do texto antes de parsear itens
+  const primeiroNome=nomeCliente.split(' ')[0];
+  const txtItens=txt.replace(new RegExp(`\\b${primeiroNome}\\b`,'i'),'');
+  // Parseia serviços com IA
+  const{encontrados,faltaMedida}=parsearServicos(txtItens);
+
+  const orc=criarOrc(cli.id,desc,
+    encontrados.map(i=>({nome:i.n,qtd:i.qtd,precoUnit:i.p,total:i.total,un:i.un})),0);
+  CTX.orcamento=orc.id;
+
+  // Monta resposta conversacional
+  let msg=`✅ Orçamento criado para **${cli.nome}**`;
+  if(cli.endereco)msg+=` *(${cli.endereco})*`;
+  msg+='!\n\n';
+
+  if(encontrados.length){
+    msg+=`📋 **Adicionado ao orçamento:**\n`;
+    for(const i of encontrados)msg+=`• ${i.qtd}x ${i.n} → ${fmt(i.total)}\n`;
+  }
+
+  if(faltaMedida.length){
+    msg+=`\n⚠️ **Ainda preciso da metragem de:**\n`;
+    for(const i of faltaMedida){
+      const v=i.vinculado?` *(vai usar a mesma medida da ${i.vinculado})*`:'';
+      msg+=`• **${i.n}** — ${i.un==='m²'?'quantos m²?':'quantos metros?'}${v}\n`;
+    }
+    CTX.dados={fila:faltaMedida,orcId:orc.id};
+    CTX.aguardando='medidas';
+    // Pergunta o primeiro
+    const prox=faltaMedida.find(i=>!i.vinculado)||faltaMedida[0];
+    msg+=`\nComeça pela **${prox.n}** — qual a ${prox.un==='m²'?'área em m²':'metragem em metros'}?`;
+    return resp(msg.trim());
+  }
+
+  if(!encontrados.length){
+    CTX.aguardando='itens';
+    msg+=`Agora me manda os itens! Pode escrever à vontade:\n• *10 disjuntores, 7 ripas, 4 leds*\n• *50m de fio 2.5*\n• *mão de obra: R$ 800*\n\nVou adicionando tudo. Quando terminar é só dizer **pronto** 👍`;
+    return resp(msg.trim());
+  }
+
+  // Tudo OK, mostra card
+  return respCard(msg.trim(),cardOrc(ORC[orc.id],cli));
+}
+
+function hAdd(txt,nomeCliente){
+  let orcId=CTX.orcamento;
+  if(!orcId&&nomeCliente){
+    const c=findCli(nomeCliente);
+    if(c){
+      const orcs=orcsDosCli(c.id);
+      if(orcs.length===1){orcId=orcs[0].id;CTX.orcamento=orcs[0].id;CTX.cliente=c.id;}
+      else if(orcs.length>1){
+        // Verifica se o texto especifica número do orçamento
+        const mNum=txt.match(/or[çc](?:amento)?\s*#?\s*(\d+)/i);
+        const num=mNum?parseInt(mNum[1]):null;
+        if(num&&num>=1&&num<=orcs.length){orcId=orcs[num-1].id;CTX.orcamento=orcs[num-1].id;CTX.cliente=c.id;}
+        else{
+          CTX.aguardando='selecionar_orc';CTX.dados={cliId:c.id};
+          const linhas=orcs.map((o,i)=>`**${i+1}.** ${o.descricao} — ${fmt(o.total)}`).join('\n');
+          return resp(`**${c.nome}** tem ${orcs.length} orçamentos:\n\n${linhas}\n\nEm qual quer adicionar os itens?`,orcs.map((_,i)=>`Orçamento ${i+1}`));
+        }
+      }
+    }
+  }
+  if(!orcId)return resp('Não encontrei orçamento aberto. Me diz o cliente! 🤔\nEx: *"adicionar 10 tomadas no orçamento do João"*');
+
+  const o=ORC[orcId];
+  const c=CLI[o.clienteId];
+
+  // Remove referências ao orçamento/cliente
+  const txtLimpo=txt.replace(/adicionar?|incluir|acrescentar|colocar\s+mais?/gi,'')
+                    .replace(/no\s+or[çc]amento\s+(do?|da?)\s+\w+/gi,'')
+                    .replace(/no\s+or[çc]amento/gi,'')
+                    .replace(/ao\s+or[çc]amento/gi,'').trim();
+
+  // "adicionar itens" sem especificar o quê → entra no modo de coleta
+  const txtSemCmd=txtLimpo.replace(/no\s+or[çc]amento/gi,'').replace(/ao\s+or[çc]amento/gi,'').trim();
+  if(!txtSemCmd||txtSemCmd.length<2){
+    CTX.aguardando='itens';
+    return resp(`Claro! O que quer adicionar ao orçamento de **${c.nome}**? Pode mandar tudo junto:\n• *5 tomadas, 10m de fio 2.5*\n• *3 disjuntores*\n• *mão de obra: R$ 500*\n\nDiga **pronto** quando terminar 👍`);
+  }
+
+  // Checar mão de obra
+  const mMdo=txtLimpo.match(/m[aã]o\s*(?:de\s*obra|obra)|mdo/i);
+  if(mMdo){
+    const val=parsearValor(txtLimpo);
+    if(val>0){
+      addItemOrc(orcId,{tipo:'mdo',valor:val});
+      return respCard(`✅ Mão de obra de **${fmt(val)}** adicionada!`,cardOrc(ORC[orcId],c));
+    }
+  }
+
+  // Parseia itens (inclui itens sem preço de catálogo)
+  const{encontrados,faltaMedida}=parsearServicos(txtLimpo||txt);
+  let adicionados=0;
+  const semPreco=[];
+
+  for(const i of encontrados){
+    addItemOrc(orcId,{...i,nome:i.n,precoUnit:i.p,tipo:'item'});
+    adicionados++;
+    if(i.semPreco)semPreco.push(i.n);
+  }
+
+  if(adicionados===0&&faltaMedida.length===0){
+    // Última tentativa: entrar em modo de coleta se parece intenção de adicionar
+    CTX.aguardando='itens';
+    return resp(`Não reconheci o item específico, mas pode me mandar assim:\n• *5 placas de rede a R$ 80 cada*\n• *3 roteadores a R$ 150*\n• *mão de obra: R$ 300*\n\nOu se preferir, manda o nome e o preço que eu adiciono! 😊`);
+  }
+
+  if(faltaMedida.length){
+    CTX.dados={fila:faltaMedida,orcId};
+    CTX.aguardando='medidas';
+    const prox=faltaMedida.find(i=>!i.vinculado)||faltaMedida[0];
+    let m=adicionados>0?`✅ ${adicionados} item(s) adicionado(s)!\n\n`:'';
+    m+=`Só me falta a metragem de **${prox.n}** — quantos ${prox.un==='m²'?'m²':'metros'}?`;
+    return resp(m);
+  }
+
+  const orcAtual=ORC[orcId];
+  let msgOk=`✅ Adicionado ao orçamento de **${c.nome}**!`;
+  if(semPreco.length){
+    msgOk+=`\n\n⚠️ Não encontrei preço para: **${semPreco.join(', ')}**.\nDigite *"preço do [item]: R$ X"* para atualizar, ou deixe como R$ 0 por enquanto.`;
+  }
+  return respCard(msgOk,cardOrc(orcAtual,c));
+}
+
+function hRemover(txt,nomeCliente){
+  let orcId=CTX.orcamento;
+  if(!orcId&&nomeCliente){const c=findCli(nomeCliente);if(c){const u=ultimoOrc(c.id);if(u)orcId=u.id}}
+  if(!orcId)return resp('Qual o orçamento? Me diz o cliente! 🤔');
+  const m=txt.match(/(?:remover?|tirar|retirar|excluir|deletar)\s+(?:o\s+|a\s+)?(?:item\s+)?(.+)/i);
+  if(!m)return resp('O que você quer remover? Ex: *"remover tomada"*');
+  const resultado=removerItemOrc(orcId,m[1].trim());
+  if(!resultado)return resp(`Não encontrei "${m[1].trim()}" no orçamento para remover.`);
+  return respCard('🗑️ Item removido!',cardOrc(resultado,CLI[resultado.clienteId]));
+}
+
+function hPag(txt,nomeCliente){
+  if(!nomeCliente){CTX.aguardando='nome_pag';CTX.dados={txtOrig:txt};return resp('Qual cliente fez o pagamento? 💰')}
+  const c=findCli(nomeCliente);
+  if(!c)return resp(`Não encontrei **${proprio(nomeCliente)}**. Verifique o nome ou crie um orçamento primeiro.`);
+  CTX.cliente=c.id;
+
+  let valor=0;
+  if(/metade/i.test(txt)){const o=ultimoOrc(c.id);if(o)valor=o.total/2}
+  else valor=parsearValor(txt);
+
+  if(!valor){
+    CTX.aguardando='valor_pag';CTX.dados={cliId:c.id};
+    return resp(`Certo! Quanto **${c.nome}** pagou? 💵`);
+  }
+  const data=parsearData(txt);
+  const o=ultimoOrc(c.id);
+  const pag=regPag(c.id,o?.id,valor,data,'');
+  const s=saldoCli(c.id);
+  let m=`💰 **${fmt(valor)}** registrado para **${c.nome}** em ${fmtD(pag.data)}.`;
+  if(s.pend>0)m+=`\n\n⏳ Ainda faltam **${fmt(s.pend)}** para quitar.`;
+  else m+=`\n\n✅ **Conta quitada!** Tudo zerado.`;
+  return resp(m);
+}
+
+function hSaldo(nome){
+  if(!nome)return resp('Qual cliente? Me diz o nome! 👤');
+  const c=findCli(nome);if(!c)return resp(`Não encontrei **${proprio(nome)}**. 🤔`);
+  CTX.cliente=c.id;
+  const s=saldoCli(c.id);const pags=pagsDosCli(c.id);
+  return respCard('',cardSaldo(c,s,pags));
+}
+
+function hFatur(nome){
+  if(!nome)return resp('Qual cliente? 👥');
+  const c=findCli(nome);if(!c)return resp(`Não encontrei **${proprio(nome)}**. 🤔`);
+  CTX.cliente=c.id;
+  return respCard('',cardFaturamento(c,orcsDosCli(c.id),pagsDosCli(c.id),saldoCli(c.id)));
+}
+
+function hFatura(nome){
+  if(!nome)return resp('Qual cliente para gerar a fatura? 🧾');
+  const c=findCli(nome);if(!c)return resp(`Não encontrei **${proprio(nome)}**. 🤔`);
+  CTX.cliente=c.id;
+  return respCard('🧾 Fatura gerada!',cardFatura(c,orcsDosCli(c.id),pagsDosCli(c.id),saldoCli(c.id)));
+}
+
+function hVerOrc(nome,txt){
+  if(!nome)return resp('Qual cliente? 📋');
+  const c=findCli(nome);if(!c)return resp(`Não encontrei **${proprio(nome)}**. 🤔`);
+  CTX.cliente=c.id;
+  const orcs=orcsDosCli(c.id);
+  if(!orcs.length)return resp(`**${c.nome}** não tem orçamentos. Crie um! 📋`);
+
+  if(orcs.length===1){CTX.orcamento=orcs[0].id;return respCard('',cardOrc(orcs[0],c));}
+
+  // Múltiplos orçamentos — verifica se o texto especifica um número
+  const mNum=(txt||'').match(/or[çc](?:amento)?\s*#?\s*(\d+)/i)||(txt||'').match(/\b(\d+)[°oº]?\s*or[çc]/i);
+  const num=mNum?parseInt(mNum[1]):null;
+  if(num&&num>=1&&num<=orcs.length){
+    CTX.orcamento=orcs[num-1].id;
+    return respCard(`📋 Orçamento ${num} de ${c.nome}:`,cardOrc(orcs[num-1],c));
+  }
+
+  // Mostra lista para seleção
+  CTX.aguardando='selecionar_orc';
+  CTX.dados={cliId:c.id};
+  const linhas=orcs.map((o,i)=>`**${i+1}.** ${o.descricao} — ${fmt(o.total)}`).join('\n');
+  return resp(`📋 **${c.nome}** tem ${orcs.length} orçamentos:\n\n${linhas}\n\nQual quer ver?`,orcs.map((_,i)=>`Orçamento ${i+1}`));
+}
+
+function hListCli(){
+  const clis=Object.values(CLI);
+  if(!clis.length)return resp('Nenhum cliente ainda! Ex: *"cliente João precisa de instalação elétrica"* 🚀');
+  return respCard(`👥 ${clis.length} clientes:`,cardListaCli(clis));
+}
+
+function hListOrc(nome){
+  let orcs;
+  if(nome){const c=findCli(nome);if(!c)return resp(`Não encontrei **${proprio(nome)}**. 🤔`);orcs=orcsDosCli(c.id).map(o=>({...o,_cn:c.nome}))}
+  else orcs=Object.values(ORC).map(o=>({...o,_cn:CLI[o.clienteId]?.nome||'?'})).sort((a,b)=>b.criadoEm.localeCompare(a.criadoEm));
+  if(!orcs.length)return resp('Nenhum orçamento ainda. 📋');
+  return respCard(`📋 ${orcs.length} orçamento(s):`,cardListaOrcs(orcs));
+}
+
+function hPendencias(){
+  const lista=Object.values(CLI).map(c=>({c,s:saldoCli(c.id)})).filter(x=>x.s.pend>0).sort((a,b)=>b.s.pend-a.s.pend);
+  if(!lista.length)return resp('🎉 Nenhuma pendência! Tudo quitado.');
+  return respCard(`⏳ ${lista.length} clientes com pendências:`,cardPendentes(lista));
+}
+
+function hRelatorio(){
+  const clis=Object.values(CLI);
+  if(!clis.length)return resp('Nenhum dado ainda. Crie orçamentos e registre pagamentos!');
+  const fat=Object.values(ORC).reduce((s,o)=>s+(o.total||0),0);
+  const pago=PAG.reduce((s,p)=>s+p.valor,0);
+  return respCard('📊 Relatório Geral',cardRelatorio(clis.length,Object.values(ORC).length,fat,pago,fat-pago));
+}
+
+function hPrazo(txt,nome){
+  if(!nome)return resp('Qual cliente para definir o prazo? 📅');
+  const c=findCli(nome);if(!c)return resp(`Não encontrei **${proprio(nome)}**. 🤔`);
+  CTX.cliente=c.id;
+  const data=parsearData(txt);
+  const o=ultimoOrc(c.id);
+  if(!o)return resp(`**${c.nome}** não tem orçamento ainda.`);
+  ORC[o.id].prazo=data;save();
+  const s=saldoCli(c.id);
+  return resp(`📅 Prazo definido! **${c.nome}** tem até **${fmtD(data)}** para pagar **${fmt(s.pend)}**.`);
+}
+
+function hAjuda(){
+  return resp(`🤖 **Mestre.IA — Comandos:**\n\n📋 **Criar orçamento:**\n• *cliente João da Rua 5 precisa de 1 quadro com 7 disjuntores*\n• *cliente Maria precisa de uma sanca com barra de led*\n• *cliente José precisa de 3 splits e 20 tomadas*\n\n**Adicionar itens:**\n• *adicionar 50m de fio 2.5*\n• *mão de obra: R$ 800*\n• *mais 5 spots e 2 interruptores*\n\n💰 **Pagamentos:**\n• *João pagou R$ 500 hoje*\n• *João pagou metade dia 10*\n• *quanto João deve*\n\n📊 **Relatórios:**\n• *faturamento do João*\n• *gerar nota do João*\n• *ver pendências*\n• *relatório geral*\n\n💰 **Preços:**\n• *"atualizar disjuntor R$ 9,90"*\n• *"preço tomada: 28"*\n• *"ver preços"*\n\n💡 Diga **sair** a qualquer momento para interromper o fluxo atual!`);
+}
+
+function hPreco(txt){
+  const t=txt.toLowerCase();
+
+  // "ver preços" / "minha tabela"
+  if(/ver\s+pre[çc]os?|minha\s+tabela|tabela\s+de\s+pre[çc]/.test(t)){
+    const keys=Object.keys(PRECOS_USER);
+    if(!keys.length)return resp('Você ainda não personalizou nenhum preço.\n\nExemplo: *"atualizar disjuntor R$ 9,90"*');
+    const linhas=keys.map(k=>`• **${k}**: ${fmt(PRECOS_USER[k])}`).join('\n');
+    return resp(`💰 **Seus preços personalizados:**\n\n${linhas}\n\nPara alterar: *"atualizar <item> R$ X"*`);
+  }
+
+  // Extrai item e preço da mensagem
+  // Ex: "atualizar disjuntor R$ 9,90", "preço tomada: 28", "mudar preço do fio 2.5 para 12"
+  const mPreco=txt.match(/R\$\s*([\d.,]+)|:\s*([\d.,]+)|para\s+([\d.,]+)|=\s*([\d.,]+)/i);
+  const novoPreco=mPreco?parseFloat((mPreco[1]||mPreco[2]||mPreco[3]||mPreco[4]).replace(',','.')):0;
+
+  if(!novoPreco){
+    return resp('Qual o novo preço? Ex: *"atualizar disjuntor R$ 9,90"*');
+  }
+
+  // Tenta identificar o item mencionado
+  const item=buscarCat(txt);
+  if(!item){
+    // Tenta extrair nome genérico do item
+    const mItem=txt.match(/(?:atualiz\w+|pre[çc]o|mudar|definir)\s+(?:o?\s*|do?\s*|da?\s*)?([a-zA-ZÀ-ÿ0-9\s.]+?)(?:\s+(?:R\$|para|:|\=)|$)/i);
+    const nomeItem=mItem?mItem[1].trim().toLowerCase():null;
+    if(nomeItem){
+      PRECOS_USER[nomeItem]=novoPreco;
+      savePrecos();
+      return resp(`✅ Preço de **${nomeItem}** atualizado para **${fmt(novoPreco)}**!\n\nEste preço será usado em todos os novos orçamentos.`);
+    }
+    return resp('Qual item quer atualizar o preço? Ex: *"atualizar disjuntor R$ 9,90"*');
+  }
+
+  const precoAnterior=PRECOS_USER[item.chave]??item.p;
+  PRECOS_USER[item.chave]=novoPreco;
+  savePrecos();
+  return resp(`✅ Preço de **${item.chave}** atualizado!\n\n~~${fmt(precoAnterior)}~~ → **${fmt(novoPreco)}**\n\nEste preço será usado em todos os novos orçamentos. Para ver sua tabela: *"ver preços"*`);
+}
+
+function hDesconhecido(txt,nome){
+  // Se tem orçamento aberto, tenta adicionar como item antes de qualquer outra coisa
+  if(CTX.orcamento){
+    // Parece tentativa de adicionar (tem número + palavras, ou "adicionar", ou mdo)
+    const pareceItem=/\d+\s+\w/.test(txt)||/adicionar?|incluir|acrescentar|botar|colocar|mais\s+\d/i.test(txt)||/m[aã]o\s*(?:de\s*obra|obra)|mdo/i.test(txt);
+    if(pareceItem)return hAdd(txt,nome);
+    // Tenta parsear mesmo assim
+    const{encontrados,faltaMedida}=parsearServicos(txt);
+    if(encontrados.length||faltaMedida.length)return hAdd(txt,nome);
+  }
+  if(nome){
+    const c=findCli(nome);
+    if(c){
+      CTX.cliente=c.id;
+      // Se o cliente tem orçamento, coloca como orçamento ativo
+      const ult=ultimoOrc(c.id);
+      if(ult)CTX.orcamento=ult.id;
+      const s=saldoCli(c.id);const orcs=orcsDosCli(c.id);
+      return resp(`**${c.nome}**${c.endereco?' — '+c.endereco:''}\n\n📋 ${orcs.length} orçamento(s) · 💰 Faturado: ${fmt(s.fat)} · ⏳ Pendente: ${fmt(s.pend)}\n\nO que quer fazer? Posso adicionar itens, registrar pagamento, gerar nota...`);
+    }
+  }
+  return resp(`Hmm, não entendi bem 🤔\n\nExemplos do que posso fazer:\n• *"João precisa de 10 tomadas e 5 disjuntores"*\n• *"João pagou R$ 500 hoje"*\n• *"quanto João deve"*\n• *"ver pendências"*\n\nOu diga **ajuda** pra ver tudo!`);
+}
+
+// ═══════════════════════════════════════
+// CARDS
+// ═══════════════════════════════════════
+function cardOrc(o,c){
+  const s=saldoCli(c.id);
+  const stCls=s.pend<=0?'badge-green':s.pend<o.total?'badge-yellow':'badge-blue';
+  const stTxt=s.pend<=0?'✅ Quitado':s.pend<o.total?'⚠️ Parcial':'📋 Pendente';
+  let itHtml='';
+  if(o.itens.length){
+    itHtml+='<div style="margin:6px 0">';
+    for(const i of o.itens){
+      itHtml+=`<div class="item-linha"><span class="item-nome">${i.qtd}${i.un==='m'||i.un==='m²'?i.un:''} ${i.nome}</span><span class="item-val">${i.precoUnit>0?fmt(i.total):'—'}</span></div>`;
+    }
+    itHtml+='</div>';
+    if(o.mdo>0)itHtml+=`<div class="row"><span class="lbl">🔧 Mão de obra</span><span class="val">${fmt(o.mdo)}</span></div>`;
+  }
+  const prazoHtml=o.prazo?`<div class="row"><span class="lbl">📅 Prazo</span><span class="val c-yellow">${fmtD(o.prazo)}</span></div>`:'';
+  return`<div class="card">
+    <div class="card-hdr dark"><span>📋 ${c.nome}${o.num?` — Orçamento #${o.num}`:''}</span><span class="badge ${stCls}">${stTxt}</span></div>
+    <div class="card-body">
+      <div class="row"><span class="lbl">Serviço</span><span class="val">${o.descricao}</span></div>
+      <div class="row"><span class="lbl">Data</span><span class="val">${fmtD(o.criadoEm)}</span></div>
+      ${c.endereco?`<div class="row"><span class="lbl">📍</span><span class="val">${c.endereco}</span></div>`:''}
+      ${prazoHtml}${itHtml}
+    </div>
+    <div class="card-total"><span>Total</span><span>${fmt(o.total)}</span></div>
+    <div class="card-footer">
+      <button class="btn-sm" onclick="acao('adicionar item ao orçamento do ${c.nome}')">+ Item</button>
+      <button class="btn-sm" onclick="acao('gerar nota do ${c.nome}')">🧾</button>
+      <button class="btn-sm primary" onclick="acao('${c.nome} pagou')">💰 Pagar</button>
+    </div>
+  </div>`;
+}
+
+function cardSaldo(c,s,pags){
+  const pCls=s.pend>0?'c-red':'c-green';
+  let pH='';
+  if(pags.length){pH=`<div class="divider"></div><div class="sec-label">Pagamentos</div>`;for(const p of pags.slice(-5))pH+=`<div class="row"><span class="lbl">${fmtD(p.data)}</span><span class="val c-green">+${fmt(p.valor)}</span></div>`}
+  return`<div class="card">
+    <div class="card-hdr dark">💰 Saldo — ${c.nome}</div>
+    <div class="card-body">
+      <div class="row"><span class="lbl">Total faturado</span><span class="val">${fmt(s.fat)}</span></div>
+      <div class="row"><span class="lbl">Total pago</span><span class="val c-green">${fmt(s.pago)}</span></div>
+      ${pH}
+    </div>
+    <div class="card-total"><span>Pendente</span><span class="${pCls}">${fmt(s.pend)}</span></div>
+    <div class="card-footer">
+      <button class="btn-sm" onclick="acao('faturamento do ${c.nome}')">📊 Histórico</button>
+      <button class="btn-sm" onclick="acao('gerar nota do ${c.nome}')">🧾 Nota</button>
+      <button class="btn-sm primary" onclick="acao('${c.nome} pagou')">💰 Pagamento</button>
+    </div>
+  </div>`;
+}
+
+function cardFaturamento(c,orcs,pags,s){
+  let oH='<div class="sec-label">Orçamentos</div>';
+  for(const o of orcs)oH+=`<div class="row clicavel" onclick="acao('ver orçamento do ${c.nome}')"><span class="lbl">${fmtD(o.criadoEm)} — ${o.descricao}</span><span class="val">${fmt(o.total)}</span></div>`;
+  let pH='';
+  if(pags.length){pH=`<div class="divider"></div><div class="sec-label">Pagamentos</div>`;for(const p of pags)pH+=`<div class="row"><span class="lbl">${fmtD(p.data)}</span><span class="val c-green">-${fmt(p.valor)}</span></div>`}
+  return`<div class="card">
+    <div class="card-hdr purple">📊 Faturamento — ${c.nome}</div>
+    <div class="card-body">${oH}${pH}</div>
+    <div class="card-total"><span>Saldo devedor</span><span class="${s.pend>0?'c-yellow':'c-green'}">${fmt(s.pend)}</span></div>
+    <div class="card-footer">
+      <button class="btn-sm" onclick="acao('gerar nota do ${c.nome}')">🧾 Nota</button>
+      <button class="btn-sm primary" onclick="acao('${c.nome} pagou')">💰 Pagamento</button>
+    </div>
+  </div>`;
+}
+
+function cardFatura(c,orcs,pags,s){
+  const nf='NF-'+Date.now().toString().slice(-6);
+  let sH='<div class="sec-label">Serviços</div>';
+  for(const o of orcs)sH+=`<div class="row"><span class="lbl">${o.descricao}</span><span class="val">${fmt(o.total)}</span></div>`;
+  let pH='';
+  if(pags.length){pH=`<div class="divider"></div><div class="sec-label">Pagamentos</div>`;for(const p of pags)pH+=`<div class="row"><span class="lbl">Pgto. ${fmtD(p.data)}</span><span class="val c-green">-${fmt(p.valor)}</span></div>`}
+  return`<div class="card">
+    <div class="card-hdr green"><span>🧾 FATURA ${nf}</span><span style="font-size:11px;opacity:.8">${fmtD(hoje())}</span></div>
+    <div class="card-body">
+      <div class="row"><span class="lbl">Cliente</span><span class="val">${c.nome}</span></div>
+      ${c.endereco?`<div class="row"><span class="lbl">📍</span><span class="val">${c.endereco}</span></div>`:''}
+      <div class="divider"></div>${sH}${pH}
+    </div>
+    <div class="card-total" style="font-size:16px"><span>${s.pend>0?'A pagar':'✅ QUITADO'}</span><span class="${s.pend>0?'c-yellow':'c-green'}">${fmt(Math.abs(s.pend))}</span></div>
+    <div class="card-footer">
+      <button class="btn-sm" onclick="imprimir('${c.id}')">🖨️ Imprimir</button>
+      <button class="btn-sm primary" onclick="acao('${c.nome} pagou')">💰 Registrar Pagamento</button>
+    </div>
+  </div>`;
+}
+
+function cardListaCli(clis){
+  const sorted=clis.sort((a,b)=>a.nome.localeCompare(b.nome));
+  let rows='';
+  for(const c of sorted){
+    const s=saldoCli(c.id);const n=orcsDosCli(c.id).length;
+    rows+=`<div class="row clicavel" onclick="acao('saldo do ${c.nome}')">
+      <span class="lbl">👤 ${c.nome}${c.endereco?` <span style="font-size:11px;opacity:.5">— ${c.endereco}</span>`:''} <span class="c-muted">(${n} orç.)</span></span>
+      <span class="val ${s.pend>0?'c-yellow':s.fat>0?'c-green':''}">${s.pend>0?fmt(s.pend)+'⏳':s.fat>0?'✅':'—'}</span>
+    </div>`;
+  }
+  return`<div class="card">
+    <div class="card-hdr dark">👥 Clientes (${clis.length})</div>
+    <div class="card-body">${rows}</div>
+    <div class="card-footer">
+      <button class="btn-sm" onclick="acao('ver pendências')">⏳ Pendências</button>
+      <button class="btn-sm primary" onclick="acao('novo orçamento')">+ Novo</button>
+    </div>
+  </div>`;
+}
+
+function cardListaOrcs(orcs){
+  let rows='';
+  for(const o of orcs.slice(0,15)){
+    rows+=`<div class="row clicavel" onclick="acao('ver orçamento do ${o._cn||CLI[o.clienteId]?.nome}')">
+      <span class="lbl"><strong>${o._cn||CLI[o.clienteId]?.nome}</strong> <span class="c-muted">— ${o.descricao}</span></span>
+      <span class="val">${fmt(o.total)}</span>
+    </div>`;
+  }
+  return`<div class="card"><div class="card-hdr dark">📋 Orçamentos</div><div class="card-body">${rows}</div></div>`;
+}
+
+function cardPendentes(lista){
+  let rows='',total=0;
+  for(const{c,s}of lista){total+=s.pend;rows+=`<div class="row clicavel" onclick="acao('saldo do ${c.nome}')"><span class="lbl">👤 ${c.nome}</span><span class="val c-yellow">${fmt(s.pend)}</span></div>`}
+  return`<div class="card">
+    <div class="card-hdr dark">⏳ Pendências (${lista.length})</div>
+    <div class="card-body">${rows}</div>
+    <div class="card-total"><span>Total a receber</span><span class="c-yellow">${fmt(total)}</span></div>
+  </div>`;
+}
+
+function cardRelatorio(nc,no,fat,pago,pend){
+  return`<div class="card">
+    <div class="card-hdr purple">📊 Relatório Geral</div>
+    <div class="card-body">
+      <div class="row"><span class="lbl">👥 Clientes</span><span class="val">${nc}</span></div>
+      <div class="row"><span class="lbl">📋 Orçamentos</span><span class="val">${no}</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="lbl">💰 Total faturado</span><span class="val">${fmt(fat)}</span></div>
+      <div class="row"><span class="lbl">✅ Total recebido</span><span class="val c-green">${fmt(pago)}</span></div>
+    </div>
+    <div class="card-total"><span>⏳ A receber</span><span class="c-yellow">${fmt(pend)}</span></div>
+    <div class="card-footer">
+      <button class="btn-sm" onclick="acao('ver pendências')">⏳ Pendências</button>
+      <button class="btn-sm" onclick="acao('listar clientes')">👥 Clientes</button>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+// IMPRIMIR
+// ═══════════════════════════════════════
+function imprimir(cliId){
+  const c=CLI[cliId];if(!c)return;
+  const orcs=orcsDosCli(c.id),pags=pagsDosCli(c.id),s=saldoCli(c.id);
+  const nf='NF-'+Date.now().toString().slice(-6);
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Fatura ${nf}</title>
+  <style>body{font-family:Arial,sans-serif;max-width:580px;margin:30px auto;padding:20px;color:#222}
+  h1{color:#6c63ff;text-align:center}p.sub{text-align:center;color:#666;font-size:13px;margin-bottom:20px}
+  .box{background:#f5f5f5;border-radius:8px;padding:14px;margin-bottom:20px}
+  .box p{margin:4px 0;font-size:14px}
+  table{width:100%;border-collapse:collapse;margin:12px 0}
+  th{background:#6c63ff;color:#fff;padding:10px;text-align:left;font-size:13px}
+  td{padding:9px;border-bottom:1px solid #eee;font-size:13px}
+  .pago{color:#059669}.tot{font-size:18px;font-weight:800;text-align:right;margin:16px 0}
+  .ok{color:#059669}.dev{color:#d97706}
+  button{margin-top:16px;padding:12px 24px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px}
+  @media print{button{display:none}}</style></head><body>
+  <h1>⚡ FATURA</h1><p class="sub">${nf} — ${fmtD(hoje())}</p>
+  <div class="box"><p><strong>Cliente:</strong> ${c.nome}</p>${c.endereco?`<p><strong>Endereço:</strong> ${c.endereco}</p>`:''}</div>
+  <table><tr><th>Serviço</th><th>Data</th><th>Valor</th></tr>${orcs.map(o=>`<tr><td>${o.descricao}</td><td>${fmtD(o.criadoEm)}</td><td>${fmt(o.total)}</td></tr>`).join('')}</table>
+  ${pags.length?`<table><tr><th>Pagamentos</th><th>Data</th><th>Valor</th></tr>${pags.map(p=>`<tr><td>Pagamento recebido</td><td>${fmtD(p.data)}</td><td class="pago">-${fmt(p.valor)}</td></tr>`).join('')}</table>`:''}
+  <div class="tot">${s.pend>0?`<span class="dev">A pagar: ${fmt(s.pend)}</span>`:`<span class="ok">✅ CONTA QUITADA</span>`}</div>
+  <button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+  </body></html>`);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════
+// CHAT UI
+// ═══════════════════════════════════════
+const resp=txt=>({tipo:'texto',conteudo:txt});
+const respCard=(txt,card)=>({tipo:'card',texto:txt,card});
+
+function md(txt){
+  return txt
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/\n/g,'<br>');
+}
+
+function addMsg(conteudo,isUser=false){
+  const chat=document.getElementById('chat');
+  const div=document.createElement('div');
+  div.className=`msg ${isUser?'user':'bot'}`;
+  let html='';
+  if(typeof conteudo==='string')html=`<div class="bubble">${md(conteudo)}</div>`;
+  else if(conteudo.tipo==='card'){if(conteudo.texto)html+=`<div class="bubble">${md(conteudo.texto)}</div>`;html+=conteudo.card}
+  else if(conteudo.tipo==='texto')html=`<div class="bubble">${md(conteudo.conteudo)}</div>`;
+  div.innerHTML=`<div class="avatar">${isUser?'👤':'⚡'}</div><div class="msg-body">${html}<span class="msg-time">${hora()}</span></div>`;
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function showTyping(){
+  const chat=document.getElementById('chat');
+  const d=document.createElement('div');d.className='msg bot';d.id='typing';
+  d.innerHTML=`<div class="avatar">⚡</div><div class="msg-body"><div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
+  chat.appendChild(d);chat.scrollTop=chat.scrollHeight;
+}
+function hideTyping(){document.getElementById('typing')?.remove()}
+
+function atualizarChips(){
+  const div=document.getElementById('chips');
+  let chips=[];
+  if(CTX.cliente&&CLI[CTX.cliente]){
+    const n=CLI[CTX.cliente].nome;
+    chips=[
+      `<button class="chip" onclick="enviarChip('ver orçamento do ${n}')">📋 Orçamento</button>`,
+      `<button class="chip" onclick="enviarChip('saldo do ${n}')">💰 Saldo</button>`,
+      `<button class="chip" onclick="enviarChip('${n} pagou')">✅ Pagamento</button>`,
+      `<button class="chip" onclick="enviarChip('gerar nota do ${n}')">🧾 Nota</button>`,
+      `<button class="chip" onclick="enviarChip('faturamento do ${n}')">📊 Histórico</button>`,
+    ];
+  } else {
+    chips=[
+      `<button class="chip" onclick="enviarChip('Novo orçamento')">📋 Orçamento</button>`,
+      `<button class="chip" onclick="enviarChip('Listar clientes')">👥 Clientes</button>`,
+      `<button class="chip" onclick="enviarChip('Ver pendências')">⏳ Pendências</button>`,
+      `<button class="chip" onclick="enviarChip('Registrar pagamento')">💰 Pagamento</button>`,
+      `<button class="chip" onclick="enviarChip('Relatório geral')">📊 Relatório</button>`,
+    ];
+  }
+  div.innerHTML=chips.join('');
+}
+
+async function enviar(){
+  const inp=document.getElementById('inp');
+  const txt=inp.value.trim();if(!txt)return;
+  inp.value='';inp.style.height='auto';
+  addMsg(txt,true);
+
+  if(IA_KEY){
+    showTyping();
+    try{
+      const res=await callGemini(txt);
+      hideTyping();
+      if(res?.resposta)addMsg({tipo:'texto',conteudo:res.resposta});
+      if(res?.acao){
+        const card=await executarAcaoIA(res.acao);
+        if(card)addMsg({tipo:'card',card,texto:''});
+      }
+    }catch(e){
+      hideTyping();
+      console.error('IA erro:',e);
+      const msg=e.message||'erro desconhecido';
+      if(msg.toLowerCase().includes('api key')||msg.includes('API_KEY_INVALID')||msg.includes('401'))
+        addMsg({tipo:'texto',conteudo:`⚠️ **Chave de API inválida.**\nToque em ✨ para reconfigurar.\n\n\`${msg}\``});
+      else if(msg.includes('rede')||msg.includes('Failed to fetch')||msg.includes('NetworkError'))
+        addMsg({tipo:'texto',conteudo:`📡 **Sem conexão com a IA.**\nVerifique sua internet.\n\n\`${msg}\``});
+      else
+        addMsg({tipo:'texto',conteudo:`⚠️ **IA falhou:** ${msg}\n\nToque em ✨ para verificar sua chave.`});
+    }
+    atualizarChips();
+    return;
+  }
+
+  // Modo manual (sem IA)
+  showTyping();
+  setTimeout(()=>{
+    hideTyping();
+    try{
+      const r=processar(txt);
+      addMsg(r);
+    }catch(e){
+      console.error('Mestre.IA erro:',e);
+      addMsg({tipo:'texto',conteudo:`Ocorreu um erro interno: *${e.message}*\n\nTente novamente ou reformule a mensagem.`});
+    }
+    atualizarChips();
+  },400+Math.random()*400);
+}
+
+function enviarChip(txt){document.getElementById('inp').value=txt;enviar()}
+function acao(txt){enviarChip(txt)}
+function abrirMenu(){document.getElementById('overlay').classList.add('show')}
+
+// ═══════════════════════════════════════
+// ÁUDIO — Web Speech API
+// ═══════════════════════════════════════
+let _sr=null,_gravando=false;
+
+function toggleAudio(){
+  if(_gravando){_sr&&_sr.stop();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    addMsg({tipo:'texto',conteudo:'⚠️ Reconhecimento de voz não suportado.\nUse Chrome no Android ou desktop.'});
+    return;
+  }
+  _sr=new SR();
+  _sr.lang='pt-BR';
+  _sr.continuous=false;
+  _sr.interimResults=false;
+  _sr.maxAlternatives=1;
+
+  _sr.onstart=()=>{
+    _gravando=true;
+    const btn=document.getElementById('btn-mic');
+    btn.classList.add('rec');btn.textContent='⏹';
+    btn.title='Parar';
+  };
+
+  _sr.onresult=(e)=>{
+    const txt=e.results[0][0].transcript.trim();
+    if(!txt)return;
+    const inp=document.getElementById('inp');
+    inp.value=txt;
+    inp.style.height='auto';
+    inp.style.height=Math.min(inp.scrollHeight,120)+'px';
+    enviar(); // envia automaticamente após reconhecer
+  };
+
+  _sr.onerror=(e)=>{
+    if(e.error==='no-speech')return; // silencioso — só não falou nada
+    if(e.error==='not-allowed')
+      addMsg({tipo:'texto',conteudo:'🎤 Permita o acesso ao microfone nas configurações do navegador.'});
+    else
+      addMsg({tipo:'texto',conteudo:'⚠️ Erro de áudio: '+e.error});
+  };
+
+  _sr.onend=()=>{
+    _gravando=false;
+    const btn=document.getElementById('btn-mic');
+    btn.classList.remove('rec');btn.textContent='🎤';
+    btn.title='Falar';
+  };
+
+  _sr.start();
+}
+function fecharMenu(){document.getElementById('overlay').classList.remove('show')}
+
+function exportarDados(){
+  fecharMenu();
+  const blob=new Blob([JSON.stringify({clientes:CLI,orcamentos:ORC,pagamentos:PAG,em:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`obrachat-${hoje()}.json`;a.click();
+  addMsg({tipo:'texto',conteudo:'💾 Dados exportados!'});
+}
+
+const inp=document.getElementById('inp');
+inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'});
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviar()}});
+
+// ═══════════════════════════════════════
+// IA — GEMINI
+// ═══════════════════════════════════════
+let IA_KEY=(()=>{try{return localStorage.getItem('oc_ia_key')||''}catch{return''}})();
+let IA_HIST=[];
+
+function abrirConfigIA(){
+  const input=document.getElementById('ia-key-input');
+  const remBtn=document.getElementById('btn-ia-remover');
+  input.value=IA_KEY?'●'.repeat(20):'';
+  remBtn.style.display=IA_KEY?'block':'none';
+  atualizarStatusIA();
+  document.getElementById('overlay-ia').classList.add('show');
+}
+function fecharConfigIA(){document.getElementById('overlay-ia').classList.remove('show')}
+
+function salvarChaveIA(){
+  const val=document.getElementById('ia-key-input').value.trim();
+  if(!val||val.startsWith('●'))return fecharConfigIA();
+  IA_KEY=val;IA_HIST=[];
+  try{localStorage.setItem('oc_ia_key',IA_KEY)}catch(e){}
+  atualizarStatusIA(true);fecharConfigIA();
+  addMsg({tipo:'texto',conteudo:'✨ **IA ativada!** Agora pode falar naturalmente:\n• *"joão 5 disjuntores"*\n• *"maria pagou 800"*\n• *"quanto o pedro deve"*'});
+}
+// gemini-2.5-flash: modelo gratuito mais recente do AI Studio
+var IA_MODEL='gemini-3.1-flash-lite';
+var IA_FALLBACK='gemini-2.5-flash-preview-05-20';
+
+async function testarChaveIA(){
+  const val=document.getElementById('ia-key-input').value.trim();
+  const key=(!val||val.startsWith('●'))?IA_KEY:val;
+  const result=document.getElementById('ia-test-result');
+  result.style.display='block';result.style.background='var(--bg3)';result.style.color='var(--muted)';
+  if(!key){result.style.background='var(--red-bg)';result.style.color='var(--red)';result.textContent='Digite uma chave antes de testar.';return;}
+  result.textContent='🔄 Verificando chave...';
+  try{
+    const res=await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/'+IA_MODEL+':generateContent?key='+key,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({contents:[{role:'user',parts:[{text:'ok'}]}],generationConfig:{maxOutputTokens:5}})}
+    );
+    const data=await res.json();
+    if(!data.error){
+      result.style.background='var(--green-bg)';result.style.color='var(--green)';
+      result.textContent='✅ Chave válida! Modelo: '+IA_MODEL;
+      return;
+    }
+    const st=data.error.status||'';
+    if(st==='RESOURCE_EXHAUSTED'){
+      // Chave válida mas rate limit temporário — não é erro permanente
+      result.style.background='var(--green-bg)';result.style.color='var(--green)';
+      result.textContent='✅ Chave válida! (rate limit temporário — pode usar normalmente)';
+      return;
+    }
+    if(st==='UNAUTHENTICATED'||st==='PERMISSION_DENIED'){
+      result.style.background='var(--red-bg)';result.style.color='var(--red)';
+      result.textContent='❌ Chave inválida ou sem permissão. Verifique em aistudio.google.com/app/apikey';
+      return;
+    }
+    // Qualquer outro erro: mostra mas não bloqueia
+    result.style.background='var(--yellow-bg)';result.style.color='var(--yellow)';
+    result.textContent='⚠️ '+data.error.message;
+  }catch(e){
+    result.style.background='var(--red-bg)';result.style.color='var(--red)';
+    result.textContent='❌ Sem conexão: '+e.message;
+  }
+}
+
+function removerChaveIA(){
+  IA_KEY='';IA_HIST=[];
+  try{localStorage.removeItem('oc_ia_key')}catch(e){}
+  atualizarStatusIA();fecharConfigIA();
+  addMsg({tipo:'texto',conteudo:'IA desativada. Modo manual ativo.'});
+}
+function atualizarStatusIA(animado=false){
+  const row=document.getElementById('ia-status-row');
+  const icon=document.getElementById('ia-status-icon');
+  const txt=document.getElementById('ia-status-txt');
+  const hdrStatus=document.getElementById('hdr-status');
+  const btnIA=document.getElementById('btn-ia');
+  if(IA_KEY){
+    row&&(row.style.background='rgba(108,99,255,.12)',row.style.borderColor='rgba(108,99,255,.3)');
+    icon&&(icon.textContent='✅');
+    txt&&(txt.textContent='IA Gemini ativa — linguagem natural habilitada');
+    hdrStatus&&(hdrStatus.innerHTML='<span class="ia-badge ia-on">✨ IA</span>');
+    btnIA&&(btnIA.style.color='var(--accent2)');
+    document.getElementById('btn-ia-remover')&&(document.getElementById('btn-ia-remover').style.display='block');
+  } else {
+    row&&(row.style.background='',row.style.borderColor='');
+    icon&&(icon.textContent='⭕');
+    txt&&(txt.textContent='IA não configurada — modo manual ativo');
+    hdrStatus&&(hdrStatus.innerHTML='Assistente de orçamentos');
+    btnIA&&(btnIA.style.color='');
+  }
+}
+
+function iaSysPrompt(){
+  const cliList=Object.values(CLI).map(c=>{
+    const s=saldoCli(c.id);
+    const orcs=orcsDosCli(c.id);
+    const orcStr=orcs.map((o,i)=>`  ${i+1}. "${o.descricao}" R$${o.total.toFixed(0)}`).join('\n');
+    return `- ${c.nome}${c.endereco?` (${c.endereco})`:''}${c.tel?` tel:${c.tel}`:''}: ${orcs.length} orç, pendente R$${s.pend.toFixed(0)}\n${orcStr}`;
+  }).join('\n')||'(vazio)';
+  const ctxDesc=CTX.orcamento&&ORC[CTX.orcamento]?
+    `Orçamento ativo: "${ORC[CTX.orcamento].descricao}" do ${CLI[ORC[CTX.orcamento].clienteId]?.nome} (#${ORC[CTX.orcamento].num})`:
+    CTX.cliente&&CLI[CTX.cliente]?`Cliente ativo: ${CLI[CTX.cliente].nome}`:'Nenhum';
+  return`Você é Mestre.IA, assistente de obras e elétrica para o Brasil. Tom informal, direto, como colega.
+
+CLIENTES E ORÇAMENTOS:
+${cliList}
+
+CONTEXTO ATIVO: ${ctxDesc}
+
+INTERPRETAÇÃO:
+- "joão 5 disjuntores" → João + 5 disjuntores → criar/adicionar orçamento
+- Se cliente tem 1 orçamento → adiciona nele sem perguntar (tipo ADD)
+- Se cliente tem 2+ orçamentos → pergunte qual ou se é novo (tipo CRIAR, orcNum null)
+- Se cliente não existe → cria novo (tipo CRIAR)
+- "pagou 500" / "recebeu 300" → tipo PAG, valor numérico; data no campo "data" (YYYY-MM-DD, hoje=${hoje()})
+- "na verdade foi dia X" / "corrigi a data" / "não foi dia X, foi dia Y" → tipo CORRIGIR_PAG (edita último pagamento, NÃO cria novo)
+- "quanto deve" / "saldo" → tipo SALDO
+- "ver orçamento" → tipo VER_ORC
+- "nota" / "fatura" → tipo FATURA
+- "atualizar preço" → tipo PRECO
+- NUNCA use tipo PAG para corrigir pagamento já existente — use CORRIGIR_PAG
+
+ITENS (reconheça variações e erros de digitação):
+disjuntor, tomada, interruptor, fio 1.5, fio 2.5, fio 4, fio 6, cabo pp,
+quadro de distribuição, sanca, barra de led, spot, trilho led, eletroduto,
+câmera, split, ventilador, chuveiro, sensor, campainha, espelho, canaleta
+
+RESPONDA SOMENTE JSON VÁLIDO:
+{"resposta":"texto natural pt-br informal","acao":{"tipo":"CRIAR|ADD|PAG|CORRIGIR_PAG|SALDO|VER_ORC|LIST_CLI|PENDENCIAS|FATURA|RELATORIO|PRECO|NADA","cliente":"nome ou null","itens":[{"nome":"...","qtd":1}],"valor":null,"data":null,"orcNum":null,"novoOrc":false,"itemPreco":null}}`;
+}
+
+function extrairJSON(text){
+  // Tenta parse direto
+  try{return JSON.parse(text)}catch{}
+  // Remove markdown code block se tiver
+  const m=text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if(m)try{return JSON.parse(m[1].trim())}catch{}
+  // Procura { ... } mais externo
+  const start=text.indexOf('{');const end=text.lastIndexOf('}');
+  if(start>=0&&end>start)try{return JSON.parse(text.slice(start,end+1))}catch{}
+  throw new Error('JSON inválido: '+text.slice(0,80));
+}
+
+async function callGemini(txt,modelo){
+  modelo=modelo||IA_MODEL;
+  IA_HIST.push({role:'user',parts:[{text:txt}]});
+  if(IA_HIST.length>24)IA_HIST=IA_HIST.slice(-24);
+
+  let res;
+  try{
+    res=await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/'+modelo+':generateContent?key='+IA_KEY,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({
+         system_instruction:{parts:[{text:iaSysPrompt()}]},
+         contents:IA_HIST,
+         generationConfig:{responseMimeType:'application/json',temperature:0.2,maxOutputTokens:700}
+       })}
+    );
+  }catch(netErr){throw new Error('Erro de rede — verifique sua conexão.');}
+
+  const data=await res.json();
+  if(data.error){
+    const st=data.error.status||'';
+    // Rate limit temporário no modelo principal → tenta fallback uma vez
+    if((st==='RESOURCE_EXHAUSTED'||data.error.code===429)&&modelo===IA_MODEL&&IA_MODEL!==IA_FALLBACK){
+      IA_HIST.pop(); // remove a mensagem que acabou de adicionar (vai re-adicionar na recursão)
+      return callGemini(txt,IA_FALLBACK);
+    }
+    throw new Error(data.error.message||'Erro desconhecido da API');
+  }
+
+  const text=data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if(!text){
+    const reason=data.candidates?.[0]?.finishReason;
+    throw new Error(reason==='SAFETY'?'Conteúdo bloqueado por filtro de segurança.':'Sem resposta da IA');
+  }
+
+  const parsed=extrairJSON(text);
+  IA_HIST.push({role:'model',parts:[{text:JSON.stringify(parsed)}]});
+  return parsed;
+}
+
+async function executarAcaoIA(acao){
+  if(!acao||acao.tipo==='NADA')return null;
+  const nome=acao.cliente;
+  const getCat=it=>{const c=buscarCat(it.nome);return c?{nome:c.chave,qtd:it.qtd||1,precoUnit:c.p,total:(it.qtd||1)*c.p,un:c.un||'un'}:{nome:it.nome,qtd:it.qtd||1,precoUnit:0,total:0,un:'un'}};
+  const itensMap=()=>(acao.itens||[]).map(getCat);
+
+  switch(acao.tipo){
+    case'CRIAR':{
+      if(!nome)return null;
+      const cli=getOrCreateCli(nome,{});CTX.cliente=cli.id;
+      const exist=orcsDosCli(cli.id);
+      if(exist.length>0&&!acao.novoOrc&&acao.orcNum==null){
+        // AI vai perguntar — mostramos a listinha de apoio
+        const linhas=exist.map((o,i)=>({...o,_cn:cli.nome}));
+        return cardListaOrcs(linhas);
+      }
+      if(acao.orcNum&&acao.orcNum<=exist.length){
+        // Adicionar em orçamento existente
+        const orc=exist[acao.orcNum-1];CTX.orcamento=orc.id;
+        for(const it of itensMap())addItemOrc(orc.id,it);
+        return cardOrc(ORC[orc.id],cli);
+      }
+      const itens=itensMap();
+      const desc=itens.length?proprio(itens.map(i=>i.nome).join(', ').slice(0,50)):'Serviço';
+      const orc=criarOrc(cli.id,desc,itens,0);CTX.orcamento=orc.id;
+      return cardOrc(orc,cli);
+    }
+    case'ADD':{
+      let orcId=CTX.orcamento;
+      if(!orcId&&nome){
+        const c=findCli(nome);
+        if(c){
+          CTX.cliente=c.id;
+          const orcs=orcsDosCli(c.id);
+          const idx=acao.orcNum&&acao.orcNum<=orcs.length?acao.orcNum-1:0;
+          orcId=orcs[idx]?.id;if(orcId)CTX.orcamento=orcId;
+        }
+      }
+      if(!orcId)return null;
+      for(const it of itensMap())addItemOrc(orcId,it);
+      return cardOrc(ORC[orcId],CLI[ORC[orcId].clienteId]);
+    }
+    case'PAG':{
+      const c=(nome&&findCli(nome))||(CTX.cliente&&CLI[CTX.cliente]);
+      if(!c||!acao.valor)return null;
+      CTX.cliente=c.id;
+      const orc=ultimoOrc(c.id);
+      const dataPag=acao.data||hoje();
+      regPag(c.id,orc?.id,acao.valor,dataPag,'');
+      const s=saldoCli(c.id);
+      return`<div class="card"><div class="card-hdr dark"><span>💰 Pagamento</span><span class="badge ${s.pend<=0?'badge-green':'badge-yellow'}">${s.pend<=0?'✅ Quitado':'⏳ Parcial'}</span></div><div class="card-body"><div class="row"><span class="lbl">Cliente</span><span class="val">${c.nome}</span></div><div class="row"><span class="lbl">Valor pago</span><span class="val c-green">${fmt(acao.valor)}</span></div><div class="row"><span class="lbl">Data</span><span class="val">${fmtD(dataPag)}</span></div><div class="row"><span class="lbl">Pendente</span><span class="val ${s.pend>0?'c-yellow':'c-green'}">${fmt(s.pend)}</span></div></div></div>`;
+    }
+    case'CORRIGIR_PAG':{
+      const c=(nome&&findCli(nome))||(CTX.cliente&&CLI[CTX.cliente]);
+      if(!c)return null;
+      CTX.cliente=c.id;
+      const pags=pagsDosCli(c.id);
+      if(!pags.length)return null;
+      // Edita o último pagamento registrado
+      const ult=pags[pags.length-1];
+      if(acao.data)ult.data=acao.data;
+      if(acao.valor)ult.valor=acao.valor;
+      save();
+      const s=saldoCli(c.id);
+      return`<div class="card"><div class="card-hdr dark"><span>✏️ Pagamento corrigido</span><span class="badge ${s.pend<=0?'badge-green':'badge-yellow'}">${s.pend<=0?'✅ Quitado':'⏳ Parcial'}</span></div><div class="card-body"><div class="row"><span class="lbl">Cliente</span><span class="val">${c.nome}</span></div><div class="row"><span class="lbl">Valor</span><span class="val c-green">${fmt(ult.valor)}</span></div><div class="row"><span class="lbl">Data</span><span class="val">${fmtD(ult.data)}</span></div><div class="row"><span class="lbl">Pendente</span><span class="val ${s.pend>0?'c-yellow':'c-green'}">${fmt(s.pend)}</span></div></div></div>`;
+    }
+    case'SALDO':{
+      const c=(nome&&findCli(nome))||(CTX.cliente&&CLI[CTX.cliente]);
+      if(!c)return null;
+      CTX.cliente=c.id;
+      const s=saldoCli(c.id);
+      return`<div class="card"><div class="card-hdr dark"><span>💼 ${c.nome}</span><span class="badge ${s.pend<=0?'badge-green':'badge-yellow'}">${s.pend<=0?'✅ Pago':'⏳ Devendo'}</span></div><div class="card-body"><div class="row"><span class="lbl">Faturado</span><span class="val">${fmt(s.fat)}</span></div><div class="row"><span class="lbl">Pago</span><span class="val c-green">${fmt(s.pago)}</span></div><div class="row"><span class="lbl">Pendente</span><span class="val ${s.pend>0?'c-yellow':'c-green'}">${fmt(s.pend)}</span></div></div></div>`;
+    }
+    case'VER_ORC':{
+      const c=(nome&&findCli(nome))||(CTX.cliente&&CLI[CTX.cliente]);
+      if(!c)return null;CTX.cliente=c.id;
+      const orcs=orcsDosCli(c.id);if(!orcs.length)return null;
+      const orc=acao.orcNum&&acao.orcNum<=orcs.length?orcs[acao.orcNum-1]:orcs[0];
+      CTX.orcamento=orc.id;return cardOrc(orc,c);
+    }
+    case'LIST_CLI':{const clis=Object.values(CLI);return clis.length?cardListaCli(clis):null;}
+    case'PENDENCIAS':{const lista=Object.values(CLI).map(c=>({c,s:saldoCli(c.id)})).filter(x=>x.s.pend>0).sort((a,b)=>b.s.pend-a.s.pend);return lista.length?cardPendentes(lista):null;}
+    case'FATURA':{const c=(nome&&findCli(nome))||(CTX.cliente&&CLI[CTX.cliente]);if(!c)return null;CTX.cliente=c.id;return cardFatura(c,orcsDosCli(c.id),pagsDosCli(c.id),saldoCli(c.id));}
+    case'RELATORIO':{const clis=Object.values(CLI);const fat=Object.values(ORC).reduce((s,o)=>s+(o.total||0),0);const pago=PAG.reduce((s,p)=>s+p.valor,0);return cardRelatorio(clis.length,Object.values(ORC).length,fat,pago,fat-pago);}
+    case'PRECO':{if(acao.itemPreco){const{nome:n,preco}=acao.itemPreco;const cat=buscarCat(n);const chave=cat?.chave||n.toLowerCase();PRECOS_USER[chave]=preco;savePrecos();}return null;}
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+window.addEventListener('load',()=>{
+  atualizarStatusIA();
+  const clis=Object.values(CLI);
+  const pend=clis.filter(c=>saldoCli(c.id).pend>0);
+  setTimeout(()=>{
+    if(!clis.length){
+      const iaMsg=IA_KEY
+        ?'✨ **IA ativa!** Fale naturalmente: *"joão 5 disjuntores"*, *"maria pagou 800"*, *"quanto o pedro deve"*...'
+        :`👋 Olá! Sou o **Mestre.IA**!\n\nDigite como você fala:\n*"João da Rua 12 precisa de 1 quadro com 7 disjuntores e sanca com led"*\n\n💡 Toque em **✨** para ativar IA e ter linguagem 100% natural.`;
+      addMsg({tipo:'texto',conteudo:iaMsg});
+    } else {
+      const iaMsg=IA_KEY?`✨ IA ativa · **${clis.length}** clientes · **${pend.length}** pendências.\n\nFala aí!`:`👋 **${clis.length}** clientes, **${pend.length}** pendências. O que faremos hoje?\n\n💡 Toque em **✨** para ativar IA.`;
+      addMsg({tipo:'texto',conteudo:iaMsg});
+    }
+  },200);
+});
+</script>
+</body>
+</html>
