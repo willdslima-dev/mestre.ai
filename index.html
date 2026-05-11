@@ -96,6 +96,32 @@ textarea::placeholder{color:var(--muted)}
 .modal-close{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:none;color:var(--muted);font-size:14px;cursor:pointer}
 .c-green{color:var(--green)}.c-yellow{color:var(--yellow)}.c-red{color:var(--red)}.c-muted{color:var(--muted);font-size:12px}
 .clicavel{cursor:pointer;transition:.15s}.clicavel:hover{opacity:.8}
+.item-edit-row{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid var(--border)}
+.item-edit-row:last-child{border:none}
+.item-edit-input{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:12px;width:100%}
+.item-edit-input:focus{outline:none;border-color:var(--accent)}
+.item-edit-nome{flex:2}
+.item-edit-qtd{flex:0 0 50px}
+.item-edit-preco{flex:1}
+.item-edit-del{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:2px 4px;flex-shrink:0}
+.item-edit-save{background:var(--accent3);border:1px solid rgba(108,99,255,.3);border-radius:6px;color:var(--accent2);font-size:11px;cursor:pointer;padding:3px 8px;flex-shrink:0}
+.orc-selector-btn{padding:7px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:12px;cursor:pointer;transition:.15s}
+.orc-selector-btn.ativo{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.mdo-edit-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px dashed var(--border);margin-top:4px}
+.cat-section{margin-bottom:2px}
+.cat-section-hdr{display:flex;align-items:center;gap:8px;padding:10px 0 6px;cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
+.cat-section-hdr span{font-size:13px;font-weight:600;flex:1}
+.cat-section-hdr .chevron{font-size:11px;color:var(--muted);transition:.2s}
+.cat-row{display:grid;grid-template-columns:1fr 52px 80px 36px;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.cat-row:last-child{border:none}
+.cat-nome{font-size:12px;color:var(--text)}
+.cat-un{font-size:11px;color:var(--muted);text-align:center}
+.cat-preco-input{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-size:12px;text-align:right;width:100%}
+.cat-preco-input:focus{outline:none;border-color:var(--accent)}
+.cat-save-btn{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:2px;transition:.15s}
+.cat-save-btn:hover{color:var(--green)}
+.cat-custom-badge{font-size:9px;padding:1px 5px;border-radius:10px;background:var(--accent3);color:var(--accent2);margin-left:4px;vertical-align:middle}
+.cat-add-row{display:grid;grid-template-columns:1fr 52px 80px auto;gap:6px;align-items:center;margin-top:8px}
 /* IA */
 .ia-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;letter-spacing:.3px;margin-left:4px}
 .ia-on{background:rgba(108,99,255,.2);color:var(--accent2);border:1px solid rgba(108,99,255,.3)}
@@ -131,10 +157,11 @@ textarea::placeholder{color:var(--muted)}
 <div class="chat" id="chat"></div>
 <div class="chips" id="chips">
   <button class="chip" onclick="enviarChip('Novo orçamento')">📋 Orçamento</button>
-  <button class="chip" onclick="enviarChip('Listar clientes')">👥 Clientes</button>
+  <button class="chip" onclick="abrirItens()">✏️ Itens</button>
+  <button class="chip" onclick="abrirCatalogo()">🗂️ Catálogo</button>
   <button class="chip" onclick="enviarChip('Ver pendências')">⏳ Pendências</button>
   <button class="chip" onclick="enviarChip('Registrar pagamento')">💰 Pagamento</button>
-  <button class="chip" onclick="enviarChip('ajuda')">❓ Ajuda</button>
+  <button class="chip" onclick="enviarChip('Listar clientes')">👥 Clientes</button>
 </div>
 <div class="input-bar">
   <div class="input-wrap">
@@ -180,6 +207,53 @@ textarea::placeholder{color:var(--muted)}
     </div>
     <div id="ia-test-result" style="display:none;margin-top:8px;font-size:12px;padding:8px 12px;border-radius:8px"></div>
     <button class="modal-close" style="margin-top:8px" onclick="fecharConfigIA()">Cancelar</button>
+  </div>
+</div>
+
+
+<div class="overlay" id="overlay-itens" onclick="fecharItens()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-height:85vh;overflow-y:auto;padding-bottom:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <h2 style="margin:0">✏️ Editar Itens</h2>
+      <button onclick="fecharItens()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div id="itens-selector" style="margin-bottom:12px"></div>
+    <div id="itens-lista"></div>
+    <div id="itens-add" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+      <div class="sec-label" style="margin-bottom:8px">Adicionar item</div>
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <input id="new-item-nome" placeholder="Nome do item" style="flex:2;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px">
+        <input id="new-item-qtd" placeholder="Qtd" type="number" min="0.1" step="0.1" style="flex:0 0 60px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 8px;color:var(--text);font-size:13px">
+        <input id="new-item-preco" placeholder="R$" type="number" min="0" step="0.01" style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 8px;color:var(--text);font-size:13px">
+      </div>
+      <button onclick="addItemModal()" style="width:100%;padding:10px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer">+ Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-cat" onclick="fecharCatalogo()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-height:88vh;display:flex;flex-direction:column;padding:0;overflow:hidden">
+    <div style="padding:18px 18px 12px;border-bottom:1px solid var(--border);flex-shrink:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h2 style="margin:0">🗂️ Catálogo de Serviços</h2>
+        <button onclick="fecharCatalogo()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer">×</button>
+      </div>
+      <input id="cat-search" placeholder="🔍 Buscar item..." oninput="filtrarCatalogo(this.value)"
+        style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 12px;color:var(--text);font-size:13px;box-sizing:border-box">
+    </div>
+    <div id="cat-body" style="flex:1;overflow-y:auto;padding:10px 18px 16px"></div>
+    <div style="padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0">
+      <div class="sec-label" style="margin-bottom:8px">➕ Novo item personalizado</div>
+      <div class="cat-add-row">
+        <input id="cat-new-nome" placeholder="Nome do serviço" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:13px">
+        <select id="cat-new-un" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 6px;color:var(--text);font-size:12px">
+          <option value="un">un</option><option value="m">m</option><option value="m²">m²</option>
+        </select>
+        <input id="cat-new-preco" placeholder="R$" type="number" min="0" step="0.01"
+          style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 8px;color:var(--text);font-size:13px">
+        <button onclick="adicionarItemCat()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">+ Add</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -351,11 +425,21 @@ const CAT_KEYS=Object.keys(CAT).sort((a,b)=>b.length-a.length); // maior primeir
 
 function buscarCat(texto){
   const t=texto.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  // Busca primeiro nos itens do usuário (maior prioridade)
+  const userKeys=Object.keys(CAT_USER||{}).sort((a,b)=>b.length-a.length);
+  for(const k of userKeys){
+    const kn=k.normalize('NFD').replace(/[̀-ͯ]/g,'');
+    if(t.includes(kn)){
+      const entrada={...CAT_USER[k],chave:k};
+      if(PRECOS_USER[k]!==undefined)entrada.p=PRECOS_USER[k];
+      return entrada;
+    }
+  }
+  // Depois no catálogo padrão
   for(const k of CAT_KEYS){
     const kn=k.normalize('NFD').replace(/[̀-ͯ]/g,'');
     if(t.includes(kn)){
       const entrada={...CAT[k],chave:k};
-      // Preço do usuário sobrescreve o catálogo
       if(PRECOS_USER[k]!==undefined)entrada.p=PRECOS_USER[k];
       return entrada;
     }
@@ -580,6 +664,20 @@ function regPag(cliId,orcId,valor,data,obs){
 // ═══════════════════════════════════════
 // INTENCÃO
 // ═══════════════════════════════════════
+function extrairOrcNums(txt){
+  // Extrai números de orçamentos mencionados: "orçamento 1 e 2", "do 1 e do 3", "só o 2"
+  const nums=[];
+  const t=txt.toLowerCase();
+  const m=t.match(/(?:or[çc](?:amento)?s?\s*)?(\d+)(?:\s*[,e]\s*(?:or[çc](?:amento)?\s*)?(\d+))*/g);
+  if(m){
+    for(const seg of m){
+      const ns=seg.match(/\d+/g);
+      if(ns)ns.forEach(n=>{const v=parseInt(n);if(v>=1&&v<=20&&!nums.includes(v))nums.push(v);});
+    }
+  }
+  return nums.length?nums:null;
+}
+
 function intencao(txt){
   const t=txt.toLowerCase();
   if(/precisa\s+d[aeo]|fazer\s+or[çc]|novo\s+or[çc]|or[çc]amento\s+(para|pro|pra)|quero\s+or[çc]|criar\s+or[çc]/.test(t))return'CRIAR';
@@ -624,7 +722,7 @@ function processar(txt){
     case'PAG':return hPag(txt,nome);
     case'SALDO':return hSaldo(nome);
     case'FATUR':return hFatur(nome);
-    case'FATURA':return hFatura(nome);
+    case'FATURA':return hFatura(nome,extrairOrcNums(txt));
     case'VER_ORC':return hVerOrc(nome,txt);
     case'LIST_CLI':return hListCli();
     case'LIST_ORC':return hListOrc(nome);
@@ -807,12 +905,20 @@ function hCriar(txt,nomeCliente,forceNew=false){
 
   // Remove o nome do cliente do texto antes de parsear itens
   const primeiroNome=nomeCliente.split(' ')[0];
-  const txtItens=txt.replace(new RegExp(`\\b${primeiroNome}\\b`,'i'),'');
-  // Parseia serviços com IA
-  const{encontrados,faltaMedida}=parsearServicos(txtItens);
+  let txtItens=txt.replace(new RegExp(`\\b${primeiroNome}\\b`,'i'),'');
 
-  const orc=criarOrc(cli.id,desc,
-    encontrados.map(i=>({nome:i.n,qtd:i.qtd,precoUnit:i.p,total:i.total,un:i.un})),0);
+  // Extrai itens com preço explícito: "sanca os materiais é 600"
+  const itensExplCriar=[];let mdoCriar=0;
+  const reMatExC=/([a-zA-ZÀ-ÿ\s]+?)\s+(?:os?\s+materiais?|o?\s*material)\s+(?:é|sao|são|custa[m]?|fica[m]?|vai?|=|:)\s*([\d.,]+(?:\s*mil)?)/gi;
+  let mExC;
+  while((mExC=reMatExC.exec(txtItens))!==null){const nomeItem=proprio(mExC[1].trim());const val=parsearValor(mExC[2]);if(nomeItem&&val>0){itensExplCriar.push({nome:nomeItem,qtd:1,precoUnit:val,total:val,un:'un'});txtItens=txtItens.replace(mExC[0],'').trim();}}
+  const mMdoC=txtItens.match(/(?:m[aã]o\s*(?:de\s*obra|obra)|mdo)\s*(?:de\s*)?(?:R\$\s*)?([\d.,]+(?:\s*mil)?)/i)||txtItens.match(/(?:R\$\s*)?([\d.,]+(?:\s*mil)?)\s*(?:de\s*)?(?:m[aã]o\s*(?:de\s*obra|obra)|mdo)/i);
+  if(mMdoC){mdoCriar=parsearValor(mMdoC[1]);txtItens=txtItens.replace(/(?:e\s+)?(?:m[aã]o\s*(?:de\s*obra|obra)|mdo)\s*(?:de\s*)?(?:R\$\s*)?[\d.,]+(?:\s*mil)?/gi,'').trim();}
+
+  const{encontrados,faltaMedida}=parsearServicos(txtItens);
+  const todosItens=[...encontrados.map(i=>({nome:i.n,qtd:i.qtd,precoUnit:i.p,total:i.total,un:i.un})),...itensExplCriar];
+
+  const orc=criarOrc(cli.id,desc,todosItens,mdoCriar);
   CTX.orcamento=orc.id;
 
   // Monta resposta conversacional
@@ -820,9 +926,11 @@ function hCriar(txt,nomeCliente,forceNew=false){
   if(cli.endereco)msg+=` *(${cli.endereco})*`;
   msg+='!\n\n';
 
-  if(encontrados.length){
+  if(todosItens.length||mdoCriar>0){
     msg+=`📋 **Adicionado ao orçamento:**\n`;
     for(const i of encontrados)msg+=`• ${i.qtd}x ${i.n} → ${fmt(i.total)}\n`;
+    for(const i of itensExplCriar)msg+=`• ${i.nome} → ${fmt(i.total)}\n`;
+    if(mdoCriar>0)msg+=`• 🔧 Mão de obra → ${fmt(mdoCriar)}\n`;
   }
 
   if(faltaMedida.length){
@@ -887,19 +995,58 @@ function hAdd(txt,nomeCliente){
     return resp(`Claro! O que quer adicionar ao orçamento de **${c.nome}**? Pode mandar tudo junto:\n• *5 tomadas, 10m de fio 2.5*\n• *3 disjuntores*\n• *mão de obra: R$ 500*\n\nDiga **pronto** quando terminar 👍`);
   }
 
-  // Checar mão de obra
-  const mMdo=txtLimpo.match(/m[aã]o\s*(?:de\s*obra|obra)|mdo/i);
-  if(mMdo){
-    const val=parsearValor(txtLimpo);
-    if(val>0){
-      addItemOrc(orcId,{tipo:'mdo',valor:val});
-      return respCard(`✅ Mão de obra de **${fmt(val)}** adicionada!`,cardOrc(ORC[orcId],c));
+  // ── Pré-processamento: extrai padrões "X os materiais é/são/custa R$N"
+  // Ex: "sanca os materiais é 600" → adiciona item "Sanca" com preço 600
+  let txtProc=txtLimpo;
+  const itensExplicitos=[];
+  // Padrão: "<nome> (os materiais|o material|material) (é|são|custa|=|:) <valor>"
+  const reMatEx=/([a-zA-ZÀ-ÿ\s]+?)\s+(?:os?\s+materiais?|o?\s*material)\s+(?:é|sao|são|custa[m]?|fica[m]?|vai?|=|:)\s*([\d.,]+(?:\s*mil)?)/gi;
+  let mEx;
+  while((mEx=reMatEx.exec(txtLimpo))!==null){
+    const nomeItem=proprio(mEx[1].trim());
+    const val=parsearValor(mEx[2]);
+    if(nomeItem&&val>0){
+      itensExplicitos.push({nome:nomeItem,val});
+      // Remove essa parte do texto para não ser reparsada
+      txtProc=txtProc.replace(mEx[0],'').trim();
+    }
+  }
+  // Padrão: "<nome> a/por R$N" ou "<nome>: R$N" ou "<nome> = R$N"
+  const rePrecoDir=/([a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ\s]{2,30?}?)\s*(?:a\s+|por\s+|:\s*|=\s*)R?\$?\s*([\d.,]+(?:\s*mil)?)/gi;
+  while((mEx=rePrecoDir.exec(txtProc))!==null){
+    const nomeItem=proprio(mEx[1].trim());
+    const val=parsearValor(mEx[2]);
+    // Ignora se parece mão de obra (tratada abaixo) ou é muito curto
+    if(nomeItem&&val>0&&nomeItem.length>2&&!/m[aã]o|mdo/i.test(nomeItem)){
+      itensExplicitos.push({nome:nomeItem,val});
+      txtProc=txtProc.replace(mEx[0],'').trim();
     }
   }
 
+  // ── Mão de obra (pode vir junto com outros itens na mesma mensagem)
+  let mdoAdicionada=false;
+  const mMdo=txtLimpo.match(/m[aã]o\s*(?:de\s*obra|obra)|mdo/i);
+  if(mMdo){
+    // Extrai o valor que está próximo da mão de obra
+    const mMdoVal=txtLimpo.match(/(?:m[aã]o\s*(?:de\s*obra|obra)|mdo)\s*(?:de\s*)?(?:R\$\s*)?([\d.,]+(?:\s*mil)?)/i)
+                  ||txtLimpo.match(/(?:R\$\s*)?([\d.,]+(?:\s*mil)?)\s*(?:de\s*)?(?:m[aã]o\s*(?:de\s*obra|obra)|mdo)/i);
+    const val=mMdoVal?parsearValor(mMdoVal[1]):parsearValor(txtLimpo);
+    if(val>0){
+      addItemOrc(orcId,{tipo:'mdo',valor:val});
+      mdoAdicionada=true;
+      // Remove mdo do texto para não confundir o parser de itens
+      txtProc=txtProc.replace(/(?:e\s+)?(?:m[aã]o\s*(?:de\s*obra|obra)|mdo)\s*(?:de\s*)?(?:R\$\s*)?[\d.,]+(?:\s*mil)?/gi,'').trim();
+    }
+  }
+
+  // Adiciona itens com preço explícito
+  for(const{nome,val}of itensExplicitos){
+    addItemOrc(orcId,{nome,qtd:1,precoUnit:val,total:val,un:'un',tipo:'item'});
+  }
+
   // Parseia itens (inclui itens sem preço de catálogo)
-  const{encontrados,faltaMedida}=parsearServicos(txtLimpo||txt);
-  let adicionados=0;
+  const{encontrados,faltaMedida}=parsearServicos(txtProc||txtLimpo||txt);
+  let adicionados=itensExplicitos.length+(mdoAdicionada?1:0);
   const semPreco=[];
 
   for(const i of encontrados){
@@ -981,11 +1128,18 @@ function hFatur(nome){
   return respCard('',cardFaturamento(c,orcsDosCli(c.id),pagsDosCli(c.id),saldoCli(c.id)));
 }
 
-function hFatura(nome){
+function hFatura(nome,orcNums){
   if(!nome)return resp('Qual cliente para gerar a fatura? 🧾');
   const c=findCli(nome);if(!c)return resp(`Não encontrei **${proprio(nome)}**. 🤔`);
   CTX.cliente=c.id;
-  return respCard('🧾 Fatura gerada!',cardFatura(c,orcsDosCli(c.id),pagsDosCli(c.id),saldoCli(c.id)));
+  let orcs=orcsDosCli(c.id);
+  if(orcNums&&orcNums.length)orcs=orcNums.map(n=>orcs[n-1]).filter(Boolean);
+  return respCard('🧾 Fatura gerada!',cardFatura(c,orcs,pagsDosCli(c.id),calcSaldoOrcs(c.id,orcs)));
+}
+function calcSaldoOrcs(cliId,orcs){
+  const fat=orcs.reduce((s,o)=>s+(o.total||0),0);
+  const pago=pagsDosCli(cliId).reduce((s,p)=>s+p.valor,0);
+  return{fat,pago,pend:fat-pago};
 }
 
 function hVerOrc(nome,txt){
@@ -1123,6 +1277,42 @@ function hDesconhecido(txt,nome){
 // ═══════════════════════════════════════
 // CARDS
 // ═══════════════════════════════════════
+function editarItem(orcId,idx){
+  const o=ORC[orcId];if(!o)return;
+  const it=o.itens[idx];if(!it)return;
+  const novoNome=prompt('Nome do item:',it.nome);
+  if(novoNome===null)return;
+  const novaQtd=parseFloat(prompt('Quantidade:',it.qtd));
+  if(isNaN(novaQtd)||novaQtd<=0)return;
+  const novoPreco=parseFloat(prompt('Preço unitário (R$):',it.precoUnit||0).replace(',','.'));
+  if(isNaN(novoPreco))return;
+  o.itens[idx]={...it,nome:novoNome.trim()||it.nome,qtd:novaQtd,precoUnit:novoPreco,total:novaQtd*novoPreco};
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+(o.mdo||0);
+  save();
+  // Re-renderiza o último card do orçamento
+  const c=CLI[o.clienteId];
+  addMsg({tipo:'card',conteudo:'✏️ Item atualizado!',card:cardOrc(o,c)});
+}
+function removerItemIdx(orcId,idx){
+  const o=ORC[orcId];if(!o)return;
+  if(!confirm('Remover "'+o.itens[idx]?.nome+'"?'))return;
+  o.itens.splice(idx,1);
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+(o.mdo||0);
+  save();
+  const c=CLI[o.clienteId];
+  addMsg({tipo:'card',conteudo:'🗑️ Item removido!',card:cardOrc(o,c)});
+}
+function editarMdo(orcId){
+  const o=ORC[orcId];if(!o)return;
+  const novo=parseFloat(prompt('Mão de obra (R$):',o.mdo||0).replace(',','.'));
+  if(isNaN(novo)||novo<0)return;
+  o.mdo=novo;
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+novo;
+  save();
+  const c=CLI[o.clienteId];
+  addMsg({tipo:'card',conteudo:'✏️ Mão de obra atualizada!',card:cardOrc(o,c)});
+}
+
 function cardOrc(o,c){
   const s=saldoCli(c.id);
   const stCls=s.pend<=0?'badge-green':s.pend<o.total?'badge-yellow':'badge-blue';
@@ -1130,11 +1320,21 @@ function cardOrc(o,c){
   let itHtml='';
   if(o.itens.length){
     itHtml+='<div style="margin:6px 0">';
-    for(const i of o.itens){
-      itHtml+=`<div class="item-linha"><span class="item-nome">${i.qtd}${i.un==='m'||i.un==='m²'?i.un:''} ${i.nome}</span><span class="item-val">${i.precoUnit>0?fmt(i.total):'—'}</span></div>`;
-    }
+    o.itens.forEach((i,idx)=>{
+      const un=i.un==='m'||i.un==='m²'?i.un:'';
+      itHtml+=`<div class="item-linha" style="align-items:center">
+        <span class="item-nome" style="flex:1">${i.qtd}${un} ${i.nome}</span>
+        <span class="item-val" style="margin-right:6px">${i.precoUnit>0?fmt(i.total):'—'}</span>
+        <button onclick="editarItem('${o.id}',${idx})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 3px" title="Editar">✏️</button>
+        <button onclick="removerItemIdx('${o.id}',${idx})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;padding:2px 3px" title="Remover">🗑</button>
+      </div>`;
+    });
     itHtml+='</div>';
-    if(o.mdo>0)itHtml+=`<div class="row"><span class="lbl">🔧 Mão de obra</span><span class="val">${fmt(o.mdo)}</span></div>`;
+    if(o.mdo>0)itHtml+=`<div class="row" style="align-items:center">
+      <span class="lbl">🔧 Mão de obra</span>
+      <span class="val" style="flex:1;text-align:right">${fmt(o.mdo)}</span>
+      <button onclick="editarMdo('${o.id}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px" title="Editar">✏️</button>
+    </div>`;
   }
   const prazoHtml=o.prazo?`<div class="row"><span class="lbl">📅 Prazo</span><span class="val c-yellow">${fmtD(o.prazo)}</span></div>`:'';
   return`<div class="card">
@@ -1175,14 +1375,30 @@ function cardSaldo(c,s,pags){
 }
 
 function cardFaturamento(c,orcs,pags,s){
-  let oH='<div class="sec-label">Orçamentos</div>';
-  for(const o of orcs)oH+=`<div class="row clicavel" onclick="acao('ver orçamento do ${c.nome}')"><span class="lbl">${fmtD(o.criadoEm)} — ${o.descricao}</span><span class="val">${fmt(o.total)}</span></div>`;
+  let oH='';
+  for(const o of orcs){
+    oH+=`<div class="sec-label" style="margin-top:10px">📋 ${o.descricao} <span style="float:right;color:var(--text);font-weight:600">${fmt(o.total)}</span></div>`;
+    if(o.itens&&o.itens.length){
+      for(const i of o.itens){
+        oH+=`<div class="item-linha">
+          <span class="item-nome">${i.qtd}${i.un==='m'||i.un==='m²'?i.un:''} ${i.nome}</span>
+          <span class="item-val">${i.precoUnit>0?fmt(i.total):'—'}</span>
+        </div>`;
+      }
+      if(o.mdo>0)oH+=`<div class="item-linha"><span class="item-nome">🔧 Mão de obra</span><span class="item-val">${fmt(o.mdo)}</span></div>`;
+    } else {
+      oH+=`<div class="item-linha"><span class="item-nome c-muted">Sem itens detalhados</span></div>`;
+    }
+  }
   let pH='';
-  if(pags.length){pH=`<div class="divider"></div><div class="sec-label">Pagamentos</div>`;for(const p of pags)pH+=`<div class="row"><span class="lbl">${fmtD(p.data)}</span><span class="val c-green">-${fmt(p.valor)}</span></div>`}
+  if(pags.length){
+    pH=`<div class="divider"></div><div class="sec-label">💰 Pagamentos recebidos</div>`;
+    for(const p of pags)pH+=`<div class="row"><span class="lbl">${fmtD(p.data)}</span><span class="val c-green">-${fmt(p.valor)}</span></div>`;
+  }
   return`<div class="card">
     <div class="card-hdr purple">📊 Faturamento — ${c.nome}</div>
     <div class="card-body">${oH}${pH}</div>
-    <div class="card-total"><span>Saldo devedor</span><span class="${s.pend>0?'c-yellow':'c-green'}">${fmt(s.pend)}</span></div>
+    <div class="card-total"><span>${s.pend>0?'⏳ Saldo devedor':'✅ Quitado'}</span><span class="${s.pend>0?'c-yellow':'c-green'}">${fmt(s.pend)}</span></div>
     <div class="card-footer">
       <button class="btn-sm" onclick="acao('gerar nota do ${c.nome}')">🧾 Nota</button>
       <button class="btn-sm primary" onclick="acao('${c.nome} pagou')">💰 Pagamento</button>
@@ -1192,12 +1408,24 @@ function cardFaturamento(c,orcs,pags,s){
 
 function cardFatura(c,orcs,pags,s){
   const nf='NF-'+Date.now().toString().slice(-6);
-  let sH='<div class="sec-label">Serviços</div>';
-  for(const o of orcs)sH+=`<div class="row"><span class="lbl">${o.descricao}</span><span class="val">${fmt(o.total)}</span></div>`;
+  let sH='';
+  for(const o of orcs){
+    sH+=`<div class="sec-label" style="margin-top:8px">📋 ${o.descricao} <span style="float:right;color:var(--text);font-weight:600">${fmt(o.total)}</span></div>`;
+    if(o.itens&&o.itens.length){
+      for(const i of o.itens){
+        const un=i.un==='m'||i.un==='m²'?i.un:'';
+        sH+=`<div class="item-linha"><span class="item-nome">${i.qtd}${un} ${i.nome}</span><span class="item-val">${i.precoUnit>0?fmt(i.total):'—'}</span></div>`;
+      }
+      if(o.mdo>0)sH+=`<div class="item-linha"><span class="item-nome">🔧 Mão de obra</span><span class="item-val">${fmt(o.mdo)}</span></div>`;
+    }
+  }
   let pH='';
-  if(pags.length){pH=`<div class="divider"></div><div class="sec-label">Pagamentos</div>`;for(const p of pags)pH+=`<div class="row"><span class="lbl">Pgto. ${fmtD(p.data)}</span><span class="val c-green">-${fmt(p.valor)}</span></div>`}
+  if(pags.length){
+    pH=`<div class="divider"></div><div class="sec-label">💰 Pagamentos</div>`;
+    for(const p of pags)pH+=`<div class="row"><span class="lbl">Pgto. ${fmtD(p.data)}</span><span class="val c-green">-${fmt(p.valor)}</span></div>`;
+  }
   return`<div class="card">
-    <div class="card-hdr green"><span>🧾 FATURA ${nf}</span><span style="font-size:11px;opacity:.8">${fmtD(hoje())}</span></div>
+    <div class="card-hdr green"><span>🧾 FATURA ${nf}${orcs.length<orcsDosCli(c.id).length?" (parcial)":""}</span><span style="font-size:11px;opacity:.8">${fmtD(hoje())}</span></div>
     <div class="card-body">
       <div class="row"><span class="lbl">Cliente</span><span class="val">${c.nome}</span></div>
       ${c.endereco?`<div class="row"><span class="lbl">📍</span><span class="val">${c.endereco}</span></div>`:''}
@@ -1277,23 +1505,42 @@ function imprimir(cliId){
   const c=CLI[cliId];if(!c)return;
   const orcs=orcsDosCli(c.id),pags=pagsDosCli(c.id),s=saldoCli(c.id);
   const nf='NF-'+Date.now().toString().slice(-6);
+
+  // Monta linhas de itens de todos os orçamentos
+  let itensRows='';
+  for(const o of orcs){
+    // Cabeçalho do orçamento
+    itensRows+=`<tr style="background:#f0eeff"><td colspan="3" style="font-weight:700;color:#6c63ff;padding:10px 9px">📋 ${o.descricao} <span style="font-size:11px;color:#888">(${fmtD(o.criadoEm)})</span></td></tr>`;
+    if(o.itens&&o.itens.length){
+      for(const i of o.itens){
+        const un=i.un==='m'||i.un==='m²'?i.un:'x';
+        itensRows+=`<tr><td style="padding-left:20px">${i.qtd}${un} ${i.nome}</td><td style="color:#888">${i.precoUnit>0?fmt(i.precoUnit)+'/un':'—'}</td><td>${i.precoUnit>0?fmt(i.total):'—'}</td></tr>`;
+      }
+      if(o.mdo>0)itensRows+=`<tr><td style="padding-left:20px">🔧 Mão de obra</td><td></td><td>${fmt(o.mdo)}</td></tr>`;
+    } else {
+      itensRows+=`<tr><td style="padding-left:20px;color:#888" colspan="3">Sem itens detalhados</td></tr>`;
+    }
+    // Subtotal do orçamento
+    itensRows+=`<tr style="background:#fafafa"><td colspan="2" style="text-align:right;font-weight:600;color:#555">Subtotal:</td><td style="font-weight:700">${fmt(o.total)}</td></tr>`;
+  }
+
   const win=window.open('','_blank');
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Fatura ${nf}</title>
-  <style>body{font-family:Arial,sans-serif;max-width:580px;margin:30px auto;padding:20px;color:#222}
+  <style>body{font-family:Arial,sans-serif;max-width:620px;margin:30px auto;padding:20px;color:#222}
   h1{color:#6c63ff;text-align:center}p.sub{text-align:center;color:#666;font-size:13px;margin-bottom:20px}
   .box{background:#f5f5f5;border-radius:8px;padding:14px;margin-bottom:20px}
   .box p{margin:4px 0;font-size:14px}
   table{width:100%;border-collapse:collapse;margin:12px 0}
   th{background:#6c63ff;color:#fff;padding:10px;text-align:left;font-size:13px}
-  td{padding:9px;border-bottom:1px solid #eee;font-size:13px}
+  td{padding:8px 9px;border-bottom:1px solid #eee;font-size:13px}
   .pago{color:#059669}.tot{font-size:18px;font-weight:800;text-align:right;margin:16px 0}
   .ok{color:#059669}.dev{color:#d97706}
   button{margin-top:16px;padding:12px 24px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px}
   @media print{button{display:none}}</style></head><body>
   <h1>⚡ FATURA</h1><p class="sub">${nf} — ${fmtD(hoje())}</p>
   <div class="box"><p><strong>Cliente:</strong> ${c.nome}</p>${c.endereco?`<p><strong>Endereço:</strong> ${c.endereco}</p>`:''}</div>
-  <table><tr><th>Serviço</th><th>Data</th><th>Valor</th></tr>${orcs.map(o=>`<tr><td>${o.descricao}</td><td>${fmtD(o.criadoEm)}</td><td>${fmt(o.total)}</td></tr>`).join('')}</table>
-  ${pags.length?`<table><tr><th>Pagamentos</th><th>Data</th><th>Valor</th></tr>${pags.map(p=>`<tr><td>Pagamento recebido</td><td>${fmtD(p.data)}</td><td class="pago">-${fmt(p.valor)}</td></tr>`).join('')}</table>`:''}
+  <table><tr><th>Item / Serviço</th><th>Preço unit.</th><th>Total</th></tr>${itensRows}</table>
+  ${pags.length?`<table><tr><th colspan="2">Pagamentos recebidos</th><th>Valor</th></tr>${pags.map(p=>`<tr><td colspan="2">Pagamento — ${fmtD(p.data)}</td><td class="pago">-${fmt(p.valor)}</td></tr>`).join('')}</table>`:''}
   <div class="tot">${s.pend>0?`<span class="dev">A pagar: ${fmt(s.pend)}</span>`:`<span class="ok">✅ CONTA QUITADA</span>`}</div>
   <button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
   </body></html>`);
@@ -1579,10 +1826,21 @@ function iaSysPrompt(){
   const ctxDesc=CTX.orcamento&&ORC[CTX.orcamento]?
     `Orçamento ativo: "${ORC[CTX.orcamento].descricao}" do ${CLI[ORC[CTX.orcamento].clienteId]?.nome} (#${ORC[CTX.orcamento].num})`:
     CTX.cliente&&CLI[CTX.cliente]?`Cliente ativo: ${CLI[CTX.cliente].nome}`:'Nenhum';
+  // Monta contexto detalhado de itens dos orçamentos
+  const orcDetail=Object.values(ORC).map(o=>{
+    const c2=CLI[o.clienteId];
+    const itStr=(o.itens||[]).map((it,i)=>`    [${i}] ${it.qtd}x ${it.nome} R$${it.precoUnit||0}/un = R$${it.total||0}`).join('\n');
+    const mdoStr=o.mdo>0?`\n    [mdo] Mão de obra R$${o.mdo}`:'';
+    return `  Orc#${o.num} de ${c2?.nome||'?'} (id:${o.id}): "${o.descricao}" total:R$${o.total||0}\n${itStr}${mdoStr}`;
+  }).join('\n')||'(vazio)';
+
   return`Você é Mestre.IA, assistente de obras e elétrica para o Brasil. Tom informal, direto, como colega.
 
 CLIENTES E ORÇAMENTOS:
 ${cliList}
+
+ITENS DETALHADOS DOS ORÇAMENTOS:
+${orcDetail}
 
 CONTEXTO ATIVO: ${ctxDesc}
 
@@ -1595,7 +1853,7 @@ INTERPRETAÇÃO:
 - "na verdade foi dia X" / "corrigi a data" / "não foi dia X, foi dia Y" → tipo CORRIGIR_PAG (edita último pagamento, NÃO cria novo)
 - "quanto deve" / "saldo" → tipo SALDO
 - "ver orçamento" → tipo VER_ORC
-- "nota" / "fatura" → tipo FATURA
+- "nota" / "fatura" → tipo FATURA; se mencionar orçamentos específicos (ex: "nota do 1 e 2", "orçamento 1 e 3"), use o campo "orcNums" com array de números ex: [1,2]
 - "atualizar preço" → tipo PRECO
 - NUNCA use tipo PAG para corrigir pagamento já existente — use CORRIGIR_PAG
 
@@ -1604,8 +1862,20 @@ disjuntor, tomada, interruptor, fio 1.5, fio 2.5, fio 4, fio 6, cabo pp,
 quadro de distribuição, sanca, barra de led, spot, trilho led, eletroduto,
 câmera, split, ventilador, chuveiro, sensor, campainha, espelho, canaleta
 
+ITENS COM PREÇO EXPLÍCITO: Se o usuário informar o preço de um item (ex: "sanca de 600 reais", "mão de obra 2500"), SEMPRE inclua o campo "precoUnit" no item com o valor informado. Se for mão de obra, use nome "mao de obra". Se não souber o preço, omita precoUnit.
+
+EDITAR ORÇAMENTO (tipo EDITAR_ORC): Use quando o usuário pedir para atualizar/corrigir/mudar preço, quantidade ou nome de um item já existente no orçamento, ou remover um item específico, ou atualizar a mão de obra.
+- Para cada alteração, inclua em "edicoes": lista de objetos com:
+  - "acao": "ATUALIZAR" ou "REMOVER"
+  - "nomeItem": nome do item a localizar (busca parcial, case insensitive)
+  - "novoPrecoUnit": novo preço unitário (só para ATUALIZAR)
+  - "novaQtd": nova quantidade (só para ATUALIZAR, opcional)
+  - "novoNome": novo nome (só para ATUALIZAR, opcional)
+- Para mão de obra: use nomeItem "mao de obra" e acao ATUALIZAR com novoPrecoUnit
+- orcNum: número do orçamento (1, 2, 3...)
+
 RESPONDA SOMENTE JSON VÁLIDO:
-{"resposta":"texto natural pt-br informal","acao":{"tipo":"CRIAR|ADD|PAG|CORRIGIR_PAG|SALDO|VER_ORC|LIST_CLI|PENDENCIAS|FATURA|RELATORIO|PRECO|NADA","cliente":"nome ou null","itens":[{"nome":"...","qtd":1}],"valor":null,"data":null,"orcNum":null,"novoOrc":false,"itemPreco":null}}`;
+{"resposta":"texto natural pt-br informal","acao":{"tipo":"CRIAR|ADD|PAG|CORRIGIR_PAG|SALDO|VER_ORC|LIST_CLI|PENDENCIAS|FATURA|RELATORIO|PRECO|EDITAR_ORC|NADA","cliente":"nome ou null","itens":[{"nome":"...","qtd":1,"precoUnit":null}],"edicoes":[{"acao":"ATUALIZAR|REMOVER","nomeItem":"...","novoPrecoUnit":null,"novaQtd":null,"novoNome":null}],"valor":null,"data":null,"orcNum":null,"orcNums":null,"novoOrc":false,"itemPreco":null}}`;
 }
 
 function extrairJSON(text){
@@ -1663,7 +1933,18 @@ async function callGemini(txt,modelo){
 async function executarAcaoIA(acao){
   if(!acao||acao.tipo==='NADA')return null;
   const nome=acao.cliente;
-  const getCat=it=>{const c=buscarCat(it.nome);return c?{nome:c.chave,qtd:it.qtd||1,precoUnit:c.p,total:(it.qtd||1)*c.p,un:c.un||'un'}:{nome:it.nome,qtd:it.qtd||1,precoUnit:0,total:0,un:'un'}};
+  const getCat=it=>{
+    // Mão de obra com preço explícito
+    if(/m[aã]o|mdo/i.test(it.nome)&&(it.precoUnit||0)>0){
+      return{tipo:'mdo',valor:it.precoUnit};
+    }
+    const precoExpl=(it.precoUnit||0)>0?it.precoUnit:null;
+    const c=buscarCat(it.nome);
+    const p=precoExpl||(c?c.p:0);
+    const un=c?c.un||'un':'un';
+    const qtd=it.qtd||1;
+    return{nome:c?c.chave:it.nome,qtd,precoUnit:p,total:qtd*p,un};
+  };
   const itensMap=()=>(acao.itens||[]).map(getCat);
 
   switch(acao.tipo){
@@ -1742,11 +2023,329 @@ async function executarAcaoIA(acao){
     }
     case'LIST_CLI':{const clis=Object.values(CLI);return clis.length?cardListaCli(clis):null;}
     case'PENDENCIAS':{const lista=Object.values(CLI).map(c=>({c,s:saldoCli(c.id)})).filter(x=>x.s.pend>0).sort((a,b)=>b.s.pend-a.s.pend);return lista.length?cardPendentes(lista):null;}
-    case'FATURA':{const c=(nome&&findCli(nome))||(CTX.cliente&&CLI[CTX.cliente]);if(!c)return null;CTX.cliente=c.id;return cardFatura(c,orcsDosCli(c.id),pagsDosCli(c.id),saldoCli(c.id));}
+    case'FATURA':{
+      const c=(nome&&findCli(nome))||(CTX.cliente&&CLI[CTX.cliente]);
+      if(!c)return null;CTX.cliente=c.id;
+      let orcs=orcsDosCli(c.id);
+      const orcNums=acao.orcNums||(acao.orcNum?[acao.orcNum]:null);
+      if(orcNums&&orcNums.length)orcs=orcNums.map(n=>orcs[n-1]).filter(Boolean);
+      return cardFatura(c,orcs,pagsDosCli(c.id),calcSaldoOrcs(c.id,orcs));
+    }
     case'RELATORIO':{const clis=Object.values(CLI);const fat=Object.values(ORC).reduce((s,o)=>s+(o.total||0),0);const pago=PAG.reduce((s,p)=>s+p.valor,0);return cardRelatorio(clis.length,Object.values(ORC).length,fat,pago,fat-pago);}
     case'PRECO':{if(acao.itemPreco){const{nome:n,preco}=acao.itemPreco;const cat=buscarCat(n);const chave=cat?.chave||n.toLowerCase();PRECOS_USER[chave]=preco;savePrecos();}return null;}
+    case'EDITAR_ORC':{
+      const c=(nome&&findCli(nome))||(CTX.cliente&&CLI[CTX.cliente]);
+      if(!c)return null;
+      CTX.cliente=c.id;
+      const orcs=orcsDosCli(c.id);
+      if(!orcs.length)return null;
+      const orc=acao.orcNum&&acao.orcNum<=orcs.length?orcs[acao.orcNum-1]:orcs[0];
+      CTX.orcamento=orc.id;
+      const edicoes=acao.edicoes||[];
+      let alterou=false;
+      for(const ed of edicoes){
+        const busca=(ed.nomeItem||'').toLowerCase();
+        // Mão de obra especial
+        if(/m[aã]o|mdo/.test(busca)){
+          if(ed.acao==='ATUALIZAR'&&ed.novoPrecoUnit!=null){
+            orc.mdo=ed.novoPrecoUnit;alterou=true;
+          }
+          continue;
+        }
+        // Busca item por nome (partial match)
+        const idx=orc.itens.findIndex(i=>i.nome.toLowerCase().includes(busca)||busca.includes(i.nome.toLowerCase()));
+        if(idx<0)continue;
+        if(ed.acao==='REMOVER'){
+          orc.itens.splice(idx,1);alterou=true;
+        } else if(ed.acao==='ATUALIZAR'){
+          const it=orc.itens[idx];
+          if(ed.novoNome)it.nome=ed.novoNome;
+          if(ed.novaQtd!=null)it.qtd=ed.novaQtd;
+          if(ed.novoPrecoUnit!=null)it.precoUnit=ed.novoPrecoUnit;
+          it.total=it.qtd*(it.precoUnit||0);
+          alterou=true;
+        }
+      }
+      if(alterou){
+        orc.total=orc.itens.reduce((s,i)=>s+(i.total||0),0)+(orc.mdo||0);
+        save();
+      }
+      return cardOrc(orc,c);
+    }
   }
   return null;
+}
+
+// ═══════════════════════════════════════
+// CATÁLOGO DE SERVIÇOS — GESTÃO
+// ═══════════════════════════════════════
+// Itens personalizados do usuário (além do CAT padrão)
+let CAT_USER=(()=>{try{return JSON.parse(localStorage.getItem('oc_cat_user')||'{}')}catch{return{}}})();
+const saveCatUser=()=>{try{localStorage.setItem('oc_cat_user',JSON.stringify(CAT_USER))}catch(e){}};
+
+const CAT_SECTIONS=[
+  {label:'⚡ Quadros e Proteção',keys:['quadro','disjuntor','disjuntor bipolar','disjuntor trifasico','dps']},
+  {label:'🔌 Pontos Elétricos',keys:['tomada','tomada 2p','tomada piso','tomada dupla','interruptor','interruptor duplo','interruptor triplo','ponto']},
+  {label:'🔧 Cabos e Eletrodutos',keys:['fio 1.5','fio 2.5','fio 4','fio 6','fio 10','cabo pp','eletroduto','caixa 4x4','caixa 4x2']},
+  {label:'💡 Iluminação',keys:['spot','lampada led','luminaria','lustre','arandela','pendente','fita led','perfil led','led']},
+  {label:'❄️ Climatização',keys:['split','ventilador','exaustor']},
+  {label:'🏗️ Gesso / Civil',keys:['sanca','forro','gesso','ripa','massa corrida','tinta','porcelanato','piso']},
+  {label:'🔒 Segurança',keys:['camera','cftv','alarme','interfone']},
+];
+
+let _catFiltro='';
+let _catSections={};// controle de seções abertas/fechadas
+
+function abrirCatalogo(){
+  // Inicializa todas as seções abertas
+  CAT_SECTIONS.forEach(s=>{ if(_catSections[s.label]===undefined)_catSections[s.label]=true; });
+  _catFiltro='';
+  document.getElementById('cat-search').value='';
+  renderCatalogo();
+  document.getElementById('overlay-cat').classList.add('show');
+}
+function fecharCatalogo(){document.getElementById('overlay-cat').classList.remove('show');}
+
+function filtrarCatalogo(q){
+  _catFiltro=q.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  renderCatalogo();
+}
+
+function getPrecoEfetivo(chave){
+  if(PRECOS_USER[chave]!==undefined)return PRECOS_USER[chave];
+  if(CAT[chave])return CAT[chave].p;
+  return 0;
+}
+
+function renderCatalogo(){
+  const body=document.getElementById('cat-body');
+  if(!body)return;
+  let html='';
+
+  const renderItem=(chave,entrada,isCustom=false)=>{
+    const nomeDisplay=entrada.n||entrada.nome||chave;
+    const preco=getPrecoEfetivo(chave);
+    const modificado=PRECOS_USER[chave]!==undefined;
+    return `<div class="cat-row" id="cat-row-${chave.replace(/[^a-z0-9]/g,'-')}">
+      <span class="cat-nome">${nomeDisplay}${modificado?'<span class="cat-custom-badge">✏ personalizado</span>':''}${isCustom?'<span class="cat-custom-badge" style="background:var(--green-bg);color:var(--green)">novo</span>':''}</span>
+      <span class="cat-un">${entrada.un||'un'}</span>
+      <input class="cat-preco-input" type="number" min="0" step="0.01" value="${preco}" id="cat-inp-${chave.replace(/[^a-z0-9]/g,'-')}" onkeydown="if(event.key==='Enter')salvarPrecoCat('${chave}')">
+      <button class="cat-save-btn" onclick="salvarPrecoCat('${chave}')" title="Salvar">💾</button>
+    </div>`;
+  };
+
+  // Seções do catálogo padrão
+  for(const sec of CAT_SECTIONS){
+    const itensVisiveis=sec.keys.filter(k=>{
+      if(!_catFiltro)return true;
+      const n=(CAT[k]?.n||k).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+      return n.includes(_catFiltro)||k.includes(_catFiltro);
+    });
+    if(itensVisiveis.length===0)continue;
+    const aberta=_catSections[sec.label]!==false||_catFiltro;
+    html+=`<div class="cat-section">
+      <div class="cat-section-hdr" onclick="toggleSecCat('${sec.label}')">
+        <span>${sec.label}</span>
+        <span class="chevron">${aberta?'▼':'▶'}</span>
+      </div>
+      ${aberta?`<div>${itensVisiveis.map(k=>renderItem(k,CAT[k])).join('')}</div>`:''}
+    </div>`;
+  }
+
+  // Itens personalizados do usuário (não estão no CAT padrão)
+  const userKeys=Object.keys(CAT_USER).filter(k=>!CAT[k]);
+  const userVisiveis=userKeys.filter(k=>{
+    if(!_catFiltro)return true;
+    const n=(CAT_USER[k].nome||k).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+    return n.includes(_catFiltro)||k.includes(_catFiltro);
+  });
+  if(userVisiveis.length>0){
+    const aberta=_catSections['__user']!==false||_catFiltro;
+    html+=`<div class="cat-section">
+      <div class="cat-section-hdr" onclick="toggleSecCat('__user')">
+        <span>⭐ Meus Serviços</span>
+        <span class="chevron">${aberta?'▼':'▶'}</span>
+      </div>
+      ${aberta?`<div>${userVisiveis.map(k=>renderItem(k,CAT_USER[k],true)).join('')}</div>`:''}
+    </div>`;
+  }
+
+  if(!html)html='<div style="text-align:center;color:var(--muted);padding:24px;font-size:13px">Nenhum item encontrado</div>';
+
+  // Cabeçalho da tabela
+  body.innerHTML=`<div style="display:grid;grid-template-columns:1fr 52px 80px 36px;gap:4px;padding:4px 0 6px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);margin-bottom:4px">
+    <span>Serviço</span><span style="text-align:center">Un.</span><span style="text-align:right">Preço</span><span></span>
+  </div>`+html;
+}
+
+function toggleSecCat(label){
+  _catSections[label]=!(_catSections[label]!==false);
+  renderCatalogo();
+}
+
+function salvarPrecoCat(chave){
+  const id='cat-inp-'+chave.replace(/[^a-z0-9]/g,'-');
+  const inp=document.getElementById(id);
+  if(!inp)return;
+  const val=parseFloat(inp.value);
+  if(isNaN(val)||val<0)return;
+  PRECOS_USER[chave]=val;
+  savePrecos();
+  // Feedback
+  inp.style.borderColor='var(--green)';
+  setTimeout(()=>{inp.style.borderColor='';renderCatalogo();},800);
+}
+
+function adicionarItemCat(){
+  const nomeEl=document.getElementById('cat-new-nome');
+  const unEl=document.getElementById('cat-new-un');
+  const precoEl=document.getElementById('cat-new-preco');
+  const nome=(nomeEl?.value||'').trim();
+  const un=unEl?.value||'un';
+  const preco=parseFloat(precoEl?.value||0);
+  if(!nome){nomeEl?.focus();return;}
+  const chave=nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ');
+  CAT_USER[chave]={nome:proprio(nome),n:proprio(nome),un,p:preco};
+  PRECOS_USER[chave]=preco;
+  saveCatUser();savePrecos();
+  nomeEl.value='';precoEl.value='';
+  _catSections['__user']=true;
+  renderCatalogo();
+}
+
+// ═══════════════════════════════════════
+// MODAL EDITAR ITENS
+// ═══════════════════════════════════════
+let _itensOrcId=null;
+
+function abrirItens(){
+  // Pega orçamento ativo, ou o mais recente
+  let orcId=CTX.orcamento;
+  if(!orcId){
+    const orcs=Object.values(ORC).sort((a,b)=>b.criadoEm.localeCompare(a.criadoEm));
+    if(!orcs.length){addMsg({tipo:'texto',conteudo:'Nenhum orçamento ainda. Crie um primeiro! 📋'});return;}
+    orcId=orcs[0].id;
+  }
+  _itensOrcId=orcId;
+  renderItensModal();
+  document.getElementById('overlay-itens').classList.add('show');
+}
+
+function fecharItens(){
+  document.getElementById('overlay-itens').classList.remove('show');
+  _itensOrcId=null;
+}
+
+function renderItensModal(){
+  const orc=ORC[_itensOrcId];
+  if(!orc)return;
+  const cli=CLI[orc.clienteId];
+
+  // Selector de orçamentos do cliente
+  const orcs=orcsDosCli(orc.clienteId);
+  let selHtml=`<div style="font-size:12px;color:var(--muted);margin-bottom:6px">👤 <strong>${cli?.nome||'?'}</strong> — escolha o orçamento:</div><div style="display:flex;gap:6px;flex-wrap:wrap">`;
+  for(const o of orcs){
+    const ativo=o.id===_itensOrcId;
+    selHtml+=`<button class="orc-selector-btn${ativo?' ativo':''}" onclick="trocarOrcModal('${o.id}')">Orç #${o.num} — ${fmt(o.total)}</button>`;
+  }
+  selHtml+='</div>';
+  document.getElementById('itens-selector').innerHTML=selHtml;
+
+  // Lista de itens editáveis
+  let html='<div style="margin-bottom:4px">';
+  html+=`<div style="display:grid;grid-template-columns:1fr 50px 80px 32px 32px;gap:4px;padding:4px 0;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px">
+    <span>Item</span><span style="text-align:center">Qtd</span><span style="text-align:right">Preço un.</span><span></span><span></span>
+  </div>`;
+
+  (orc.itens||[]).forEach((it,idx)=>{
+    html+=`<div class="item-edit-row" style="display:grid;grid-template-columns:1fr 50px 80px 32px 32px;gap:4px;align-items:center">
+      <input class="item-edit-input item-edit-nome" value="${it.nome}" onchange="salvarItemModal('${orc.id}',${idx},'nome',this.value)">
+      <input class="item-edit-input item-edit-qtd" type="number" min="0.1" step="0.1" value="${it.qtd}" style="text-align:center" onchange="salvarItemModal('${orc.id}',${idx},'qtd',this.value)">
+      <input class="item-edit-input item-edit-preco" type="number" min="0" step="0.01" value="${it.precoUnit||0}" style="text-align:right" onchange="salvarItemModal('${orc.id}',${idx},'preco',this.value)">
+      <button class="item-edit-save" onclick="confirmarItemModal('${orc.id}',${idx})" title="Salvar">✓</button>
+      <button class="item-edit-del" onclick="removerItemModal('${orc.id}',${idx})" title="Remover">🗑</button>
+    </div>`;
+  });
+
+  // Mão de obra
+  html+=`<div class="mdo-edit-row">
+    <span style="font-size:12px;color:var(--muted);flex-shrink:0">🔧 Mão de obra:</span>
+    <input class="item-edit-input" type="number" min="0" step="0.01" value="${orc.mdo||0}" id="mdo-val-input" style="flex:1;text-align:right">
+    <button class="item-edit-save" onclick="salvarMdoModal('${orc.id}')" style="flex-shrink:0">✓ Salvar</button>
+  </div>`;
+
+  html+=`<div class="card-total" style="margin-top:8px;border-radius:10px"><span>Total</span><span>${fmt(orc.total)}</span></div>`;
+  html+='</div>';
+  document.getElementById('itens-lista').innerHTML=html;
+}
+
+function trocarOrcModal(orcId){
+  _itensOrcId=orcId;
+  CTX.orcamento=orcId;
+  renderItensModal();
+}
+
+function salvarItemModal(orcId,idx,campo,val){
+  // Apenas marca o campo como modificado — salva ao clicar ✓
+  // (ou salva automaticamente no onchange para UX mais fluida)
+  const o=ORC[orcId];if(!o)return;
+  const it=o.itens[idx];if(!it)return;
+  if(campo==='nome')it.nome=val.trim()||it.nome;
+  else if(campo==='qtd'){it.qtd=parseFloat(val)||it.qtd;it.total=it.qtd*(it.precoUnit||0);}
+  else if(campo==='preco'){it.precoUnit=parseFloat(val)||0;it.total=it.qtd*it.precoUnit;}
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+(o.mdo||0);
+  save();
+  // Atualiza só o total sem re-renderizar tudo
+  const totEl=document.querySelector('#itens-lista .card-total span:last-child');
+  if(totEl)totEl.textContent=fmt(o.total);
+}
+
+function confirmarItemModal(orcId,idx){
+  // Lê os inputs da linha e salva
+  const rows=document.querySelectorAll('#itens-lista .item-edit-row');
+  const row=rows[idx];if(!row)return;
+  const inputs=row.querySelectorAll('input');
+  salvarItemModal(orcId,idx,'nome',inputs[0].value);
+  salvarItemModal(orcId,idx,'qtd',inputs[1].value);
+  salvarItemModal(orcId,idx,'preco',inputs[2].value);
+  // Feedback visual
+  const btn=row.querySelector('.item-edit-save');
+  if(btn){btn.textContent='✅';setTimeout(()=>{btn.textContent='✓'},1000);}
+}
+
+function removerItemModal(orcId,idx){
+  const o=ORC[orcId];if(!o)return;
+  const nome=o.itens[idx]?.nome||'item';
+  if(!confirm(`Remover "${nome}"?`))return;
+  o.itens.splice(idx,1);
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+(o.mdo||0);
+  save();
+  renderItensModal();
+}
+
+function salvarMdoModal(orcId){
+  const o=ORC[orcId];if(!o)return;
+  const val=parseFloat(document.getElementById('mdo-val-input')?.value||0);
+  o.mdo=val;
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+val;
+  save();
+  renderItensModal();
+}
+
+function addItemModal(){
+  const orcId=_itensOrcId;
+  const o=ORC[orcId];if(!o)return;
+  const nome=document.getElementById('new-item-nome')?.value.trim();
+  const qtd=parseFloat(document.getElementById('new-item-qtd')?.value)||1;
+  const preco=parseFloat(document.getElementById('new-item-preco')?.value)||0;
+  if(!nome){alert('Digite o nome do item!');return;}
+  o.itens.push({nome:proprio(nome),qtd,precoUnit:preco,total:qtd*preco,un:'un'});
+  o.total=o.itens.reduce((s,i)=>s+(i.total||0),0)+(o.mdo||0);
+  save();
+  document.getElementById('new-item-nome').value='';
+  document.getElementById('new-item-qtd').value='';
+  document.getElementById('new-item-preco').value='';
+  renderItensModal();
 }
 
 // ═══════════════════════════════════════
